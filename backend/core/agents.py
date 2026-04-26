@@ -1,4 +1,4 @@
-from generator import generate_section
+from backend.services.generator_service import generate_section
 
 def research_agent(topic, context):
     return generate_section("Research Summary", topic, context)

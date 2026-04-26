@@ -1,8 +1,10 @@
-import ollama
+import requests
+import os
 
 def generate_section(section, topic, context):
     # 🔥 LIMIT CONTEXT (VERY IMPORTANT)
     context = context[:4000]
+    api_key = os.getenv("GROQ_API_KEY")
 
     # 🔥 STRONG PROMPT (BETTER OUTPUT)
     prompt = f"""
@@ -32,12 +34,22 @@ Return ONLY the section content (no headings like "Introduction:")
 """
 
     try:
-        response = ollama.chat(
-            model="llama3:8b",
-            messages=[{"role": "user", "content": prompt}]
+        response = requests.post(
+            "https://api.groq.com/openai/v1/chat/completions",
+            headers={
+                "Authorization": f"Bearer {api_key}",
+                "Content-Type": "application/json"
+            },
+            json={
+                "model": "llama3-8b-8192",
+                "messages": [{"role": "user", "content": prompt}],
+                "max_tokens": 2000
+            },
+            timeout=180
         )
-
-        result = response["message"]["content"]
+        response.raise_for_status()
+        data = response.json()
+        result = data["choices"][0]["message"]["content"]
 
         # 🔥 SAFETY CHECK
         if not result or len(result.strip()) < 50:

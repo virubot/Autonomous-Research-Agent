@@ -1,152 +1,215 @@
 import streamlit as st
-from fetch_semantic import fetch_papers
-from bibtex_parser import generate_bibtex
-from plagiarism import check_plagiarism
-from latex_writer import create_pdf
-from agents import research_agent, analysis_agent, writer_agent
-from rag import RAG
-from pdf_reader import download_pdf, extract_text_from_pdf
+import requests
+import time
 
-st.set_page_config(page_title="AI Research Generator", layout="wide")
+# ----------------------------
+# CONFIG
+# ----------------------------
+st.set_page_config(page_title="AI Research Assistant", layout="wide")
 
-st.title("🤖 AI Research Paper Generator")
+# ----------------------------
+# 🔥 PREMIUM CSS
+# ----------------------------
+st.markdown("""
+<style>
 
-topic = st.text_input("Enter Research Topic")
+/* Background */
+[data-testid="stAppViewContainer"] {
+    background: linear-gradient(135deg, #0f172a, #020617);
+    color: white;
+}
 
-if st.button("Generate Research Paper"):
+/* Sidebar */
+section[data-testid="stSidebar"] {
+    background: rgba(15, 23, 42, 0.85);
+    backdrop-filter: blur(16px);
+}
 
-    if not topic:
-        st.warning("Please enter a topic")
-        st.stop()
+/* Buttons */
+.stButton>button {
+    background: linear-gradient(90deg, #6366f1, #8b5cf6);
+    color: white;
+    border-radius: 10px;
+    padding: 10px 18px;
+    border: none;
+    font-weight: 600;
+    transition: 0.3s;
+}
+.stButton>button:hover {
+    transform: scale(1.05);
+}
 
-    # ----------------------------
-    # FETCH PAPERS
-    # ----------------------------
-    st.info("📥 Fetching papers...")
-    papers = fetch_papers(topic)
+/* Chat bubbles */
+.stChatMessage {
+    background: rgba(255,255,255,0.05);
+    border-radius: 16px;
+    padding: 16px;
+    margin-bottom: 10px;
+    backdrop-filter: blur(10px);
+}
 
-    if not papers:
-        st.error("No papers found. Try another topic.")
-        st.stop()
+/* Cards */
+.card {
+    background: rgba(255,255,255,0.05);
+    padding: 16px;
+    border-radius: 16px;
+    margin-bottom: 12px;
+    backdrop-filter: blur(10px);
+}
 
-    # ----------------------------
-    # CHUNKING
-    # ----------------------------
-    chunks = []
+/* Inputs */
+textarea, input {
+    border-radius: 12px !important;
+    background-color: #020617 !important;
+    color: white !important;
+}
 
-    for i, p in enumerate(papers):
-        text = ""
+/* Titles */
+h1, h2, h3 {
+    font-weight: 700;
+}
 
-        if p.get("pdf"):
-            try:
-                file_path = download_pdf(p["pdf"], f"paper_{i}.pdf")
-                if file_path:
-                    text = extract_text_from_pdf(file_path)
-                    text = text[:5000]
-            except Exception:
-                st.warning(f"PDF failed for paper {i+1}")
+/* Smooth spacing */
+.block-container {
+    padding-top: 2rem;
+}
 
-        if not text.strip():
-            text = p.get("abstract") or p.get("title", "")
+</style>
+""", unsafe_allow_html=True)
 
-        sentences = text.split(".")
-        for j in range(0, len(sentences), 3):
-            chunk = ". ".join(sentences[j:j+3])
-            if chunk.strip():
-                chunks.append(f"[{p['id']}] {chunk}")
+# ----------------------------
+# 🧠 SESSION STATE
+# ----------------------------
+if "chat_sessions" not in st.session_state:
+    st.session_state.chat_sessions = {}
 
-    if not chunks:
-        st.error("No usable data found.")
-        st.stop()
+if "current_chat" not in st.session_state:
+    st.session_state.current_chat = "Chat 1"
+    st.session_state.chat_sessions["Chat 1"] = []
 
-    chunks = chunks[:100]
+messages = st.session_state.chat_sessions[st.session_state.current_chat]
 
-    # ----------------------------
-    # RAG
-    # ----------------------------
-    rag = RAG()
-    rag.add_documents(chunks)
+# ----------------------------
+# 💬 SIDEBAR
+# ----------------------------
+st.sidebar.markdown("## 💬 Chats")
 
-    relevant_chunks = rag.query(topic, k=5)
+if st.sidebar.button("➕ New Chat"):
+    new_chat = f"Chat {len(st.session_state.chat_sessions)+1}"
+    st.session_state.chat_sessions[new_chat] = []
+    st.session_state.current_chat = new_chat
 
-    if not relevant_chunks:
-        rag_context = "Basic information about the topic."
-    else:
-        rag_context = "\n".join(relevant_chunks)
+for chat in st.session_state.chat_sessions:
+    if st.sidebar.button(f"💭 {chat}"):
+        st.session_state.current_chat = chat
 
-    # 🔥 LIMIT CONTEXT
-    rag_context = rag_context[:4000]
+# ----------------------------
+# 🔬 HEADER
+# ----------------------------
+st.markdown("""
+# 🔬 AI Research Assistant  
+### 🚀 Search • Analyze • Generate Research Papers  
+""")
 
-    # ----------------------------
-    # AGENTS
-    # ----------------------------
-    st.info("🤖 Running Research Agent...")
-    research_summary = research_agent(topic, rag_context)
+# ----------------------------
+# 📝 PAPER GENERATOR
+# ----------------------------
+with st.container():
+    st.markdown('<div class="card">', unsafe_allow_html=True)
 
-    st.info("🧠 Running Analysis Agent...")
-    analysis = analysis_agent(topic, research_summary)
+    st.markdown("### 📝 Generate Research Paper")
 
-    st.info("✍️ Writing Paper...")
-    content = writer_agent(topic, rag_context)
+    paper_topic = st.text_input("Enter topic")
 
-    # ----------------------------
-    # SAFETY CHECK
-    # ----------------------------
-    if not content or not isinstance(content, dict):
-        st.error("⚠️ Content generation failed.")
-        st.stop()
+    if st.button("🚀 Generate Paper"):
+        if paper_topic:
+            with st.spinner("Generating research paper..."):
+                try:
+                    res = requests.post(
+                        "http://127.0.0.1:8000/generate",
+                        json={"topic": paper_topic}
+                    )
 
-    # ----------------------------
-    # 🔥 PLAGIARISM CHECK (FIXED)
-    # ----------------------------
-    try:
-        intro = content.get("Introduction", "")
-        similarity = check_plagiarism(intro, [rag_context])
+                    st.success("✅ Paper Generated!")
 
-        st.subheader("📊 Plagiarism Score")
-        st.metric("Similarity Score", f"{similarity:.2f}")
+                    try:
+                        with open("research_paper.pdf", "rb") as f:
+                            st.download_button("📄 Download PDF", f)
+                    except:
+                        st.warning("PDF not found")
 
-    except Exception:
-        st.warning("⚠️ Could not calculate plagiarism score")
-
-    # ----------------------------
-    # REFERENCES
-    # ----------------------------
-    try:
-        bibtex = generate_bibtex(papers)
-
-        if bibtex and bibtex.strip():
-            content["References"] = bibtex
+                except Exception as e:
+                    st.error(f"Error: {e}")
         else:
-            content["References"] = "No references available"
+            st.warning("Enter topic")
 
-    except Exception:
-        st.warning("⚠️ Failed to generate references")
-        content["References"] = "No references available"
+    st.markdown('</div>', unsafe_allow_html=True)
 
-    # ----------------------------
-    # RESULTS DISPLAY
-    # ----------------------------
-    st.success("✅ Paper Generated!")
+# ----------------------------
+# 💬 CHAT INPUT
+# ----------------------------
+query = st.chat_input("💬 Ask anything about research...")
 
-    st.subheader("📄 Introduction")
-    st.write(content.get("Introduction", ""))
+if query:
+    messages.append({"role": "user", "content": query})
 
-    st.subheader("📄 Conclusion")
-    st.write(content.get("Conclusion", ""))
-
-    # ----------------------------
-    # PDF GENERATION
-    # ----------------------------
-    try:
-        create_pdf(content)
-
-        with open("research_paper.pdf", "rb") as f:
-            st.download_button(
-                "📥 Download PDF",
-                f,
-                file_name="research_paper.pdf"
+    with st.spinner("🤖 Thinking..."):
+        try:
+            res = requests.post(
+                "http://127.0.0.1:8000/assistant",
+                json={"query": query}
             )
+            data = res.json()
 
-    except Exception as e:
-        st.error(f"❌ PDF generation failed: {e}")
+            answer = data.get("answer", "No response")
+            sources = data.get("sources", [])
+
+        except Exception as e:
+            answer = f"Error: {e}"
+            sources = []
+
+    messages.append({
+        "role": "assistant",
+        "content": answer,
+        "sources": sources
+    })
+
+# ----------------------------
+# 💬 DISPLAY CHAT
+# ----------------------------
+for msg in messages:
+
+    if msg["role"] == "user":
+        with st.chat_message("user"):
+            st.markdown(f"""
+            <div class="card">{msg["content"]}</div>
+            """, unsafe_allow_html=True)
+
+    else:
+        with st.chat_message("assistant"):
+
+            # ✨ Typing animation
+            placeholder = st.empty()
+            full_text = msg["content"]
+
+            typed = ""
+            for char in full_text:
+                typed += char
+                placeholder.markdown(f"""
+                <div class="card">{typed}</div>
+                """, unsafe_allow_html=True)
+                time.sleep(0.002)
+
+            # 📚 Sources
+            if msg.get("sources"):
+                st.markdown("### 📚 Sources")
+
+                for p in msg["sources"]:
+                    st.markdown(f"""
+                    <div class="card">
+                    📄 <b>{p.get('title','No title')}</b>
+                    </div>
+                    """, unsafe_allow_html=True)
+
+# Save session
+st.session_state.chat_sessions[st.session_state.current_chat] = messages

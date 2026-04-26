@@ -1,0 +1,20 @@
+{
+  "name": "research-agent-node-backend",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "node --env-file=.env --watch server.js",
+    "start": "node --env-file=.env server.js"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.18.3",
+    "openai": "^6.34.0",
+    "pdfkit": "^0.18.0",
+    "puppeteer": "^24.42.0"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

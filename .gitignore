@@ -1,5 +1,28 @@
+# Python
 .venv/
 __pycache__/
+*.pyc
+
+# Node
+**/node_modules/
+**/dist/
+.npm
+npm-debug.log*
+
+# Secrets
+.env
+**/.env
+.env.local
+.env.*.local
+
+# Output
+generated_pdfs/
 *.pdf
 *.tex
+
+# OS
 .DS_Store
+Thumbs.db
+
+# Database
+*.db

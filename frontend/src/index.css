@@ -1,0 +1,127 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+/* Fluid, layered research interface. Bi-color blended dark navy + indigo.
+   Surfaces are translucent glass; depth comes from light/shadow, not borders. */
+
+@layer base {
+  :root {
+    --background: 222 40% 6%;          /* deep navy #0b0f17 */
+    --foreground: 220 16% 92%;
+
+    --card: 224 30% 11%;
+    --card-foreground: 220 16% 92%;
+
+    --popover: 224 30% 11%;
+    --popover-foreground: 220 16% 92%;
+
+    --primary: 234 80% 70%;            /* soft indigo */
+    --primary-foreground: 222 40% 6%;
+
+    --secondary: 224 25% 14%;
+    --secondary-foreground: 220 16% 92%;
+
+    --muted: 224 22% 12%;
+    --muted-foreground: 220 10% 66%;
+
+    --accent: 230 30% 55%;
+    --accent-foreground: 222 40% 6%;
+
+    --destructive: 0 65% 58%;
+    --destructive-foreground: 220 16% 95%;
+
+    /* Borders are mostly transparent; depth via shadow */
+    --border: 225 25% 22%;
+    --input: 224 25% 14%;
+    --ring: 234 70% 60%;
+
+    --radius: 1rem;
+
+    /* Glass surfaces */
+    --glass: 224 35% 13%;
+    --glass-strong: 226 38% 15%;
+    --glass-border: 230 30% 35%;
+
+    /* Soft message bubbles (low contrast, no harsh edges) */
+    --bubble-user: 234 50% 32%;
+    --bubble-user-fg: 220 20% 96%;
+    --bubble-ai-fg: 220 16% 92%;
+
+    --shadow-soft: 0 1px 2px hsl(222 50% 2% / 0.4), 0 8px 32px -12px hsl(222 50% 2% / 0.5);
+    --shadow-float: 0 2px 4px hsl(222 50% 2% / 0.3), 0 20px 60px -20px hsl(222 50% 2% / 0.55);
+
+    --transition-smooth: cubic-bezier(0.22, 1, 0.36, 1);
+
+    /* Sidebar — translucent, no hard edges */
+    --sidebar-background: 223 35% 8%;
+    --sidebar-foreground: 220 14% 84%;
+    --sidebar-primary: 234 80% 70%;
+    --sidebar-primary-foreground: 222 40% 6%;
+    --sidebar-accent: 226 28% 16%;
+    --sidebar-accent-foreground: 220 16% 94%;
+    --sidebar-border: 225 25% 18%;
+    --sidebar-ring: 234 70% 60%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  html, body, #root {
+    @apply h-full;
+  }
+
+  body {
+    @apply bg-background text-foreground antialiased;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    font-feature-settings: 'cv11', 'ss01';
+  }
+
+  ::-webkit-scrollbar { width: 10px; height: 10px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb {
+    background: hsl(225 25% 24% / 0.6);
+    border-radius: 999px;
+    border: 2px solid transparent;
+    background-clip: padding-box;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: hsl(225 25% 35% / 0.8);
+    background-clip: padding-box;
+    border: 2px solid transparent;
+  }
+}
+
+@layer utilities {
+  /* Floating glass surface — soft, low contrast, no hard border */
+  .glass {
+    background: hsl(var(--glass) / 0.55);
+    backdrop-filter: blur(20px) saturate(140%);
+    -webkit-backdrop-filter: blur(20px) saturate(140%);
+    border: 1px solid hsl(var(--glass-border) / 0.18);
+    box-shadow: var(--shadow-soft);
+  }
+  .glass-strong {
+    background: hsl(var(--glass-strong) / 0.7);
+    backdrop-filter: blur(24px) saturate(150%);
+    -webkit-backdrop-filter: blur(24px) saturate(150%);
+    border: 1px solid hsl(var(--glass-border) / 0.22);
+    box-shadow: var(--shadow-float);
+  }
+  .glass-subtle {
+    background: hsl(var(--glass) / 0.35);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+  }
+  .ring-focus {
+    @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 focus-visible:ring-offset-0;
+  }
+  .shadow-soft { box-shadow: var(--shadow-soft); }
+  .shadow-float { box-shadow: var(--shadow-float); }
+}

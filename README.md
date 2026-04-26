@@ -1,148 +1,160 @@
-# 📄 AI Research Paper Generator 🚀
+# 📄 Virubot: Autonomous Research Agent 🚀
 
-[![Python](https://img.shields.io/badge/Python-3.8%2B-blue.svg)](https://www.python.org/)
-[![Ollama](https://img.shields.io/badge/Ollama-Local%20LLMs-black.svg)](https://ollama.com/)
-[![Streamlit](https://img.shields.io/badge/Streamlit-App-red.svg)](https://streamlit.io/)
-[![LaTeX](https://img.shields.io/badge/LaTeX-PDF_Gen-008080.svg)](https://www.latex-project.org/)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![MIT License](https://img.shields.io/badge/License-MIT-green.svg)](https://opensource.org/licenses/MIT)
+[![Node.js](https://img.shields.io/badge/Node.js-v18+-68a063.svg)](https://nodejs.org/)
+[![FastAPI](https://img.shields.io/badge/FastAPI-v0.100+-009688.svg)](https://fastapi.tiangolo.com/)
+[![React](https://img.shields.io/badge/React-18-61dafb.svg)](https://reactjs.org/)
+[![Groq](https://img.shields.io/badge/Powered_by-Groq-orange.svg)](https://groq.com/)
+[![Puppeteer](https://img.shields.io/badge/PDF_Engine-Puppeteer-blue.svg)](https://pptr.dev/)
 
-> An AI-powered, multi-agent system that autonomously generates structured, IEEE-style research papers based on a given topic using local LLMs and Retrieval-Augmented Generation (RAG).
+**Virubot** is a state-of-the-art, multi-service autonomous agent designed to generate professional, high-fidelity IEEE-style research papers. By orchestrating a hybrid backend (FastAPI + Node.js) and a modern React frontend, it transforms a single topic into a complete, print-ready academic document with zero manual formatting required.
 
 ---
 
-## 📖 Overview
-
-Generating well-researched, structured, and accurately cited research papers manually can be overwhelming. This project automates the process by employing a **Multi-Agent Architecture** fueled by **Retrieval-Augmented Generation (RAG)**. 
-
-By fetching relevant academic papers, eliminating hallucination with RAG, and formatting the output as an IEEE-standard PDF—all executing locally without relying on expensive APIs—this tool streamlines academic drafting.
+## 📖 Table of Contents
+- [✨ Key Features](#-key-features)
+- [🏗 Architecture](#-architecture)
+- [🛠 Tech Stack](#-tech-stack)
+- [🚀 Quick Start](#-quick-start)
+- [📂 Project Structure](#-project-structure)
+- [🔧 API Endpoints](#-api-endpoints)
+- [🤝 Contributing](#-contributing)
+- [📜 License](#-license)
 
 ---
 
 ## ✨ Key Features
 
-- 🧠 **RAG-Powered Accuracy**: Submits context-rich prompts to LLMs, heavily reducing hallucinations.
-- 🤖 **Multi-Agent Pipeline**: Distributes tasks among a Research Agent, Analysis Agent, and Writer Agent for high-quality, structured output.
-- 🎓 **IEEE-Style Formatting**: Automates generation of professional academic papers via LaTeX.
-- 📚 **Citation & Plagiarism**: Handles citations intuitively and natively checks against direct copying.
-- 🔒 **100% Local Execution**: Powered by Ollama—no paid OpenAI/Anthropic APIs required!
-- 🎛️ **Streamlit UI**: A clean, beginner-friendly web interface.
+- 🏛 **Academic Typesetting**: Automatic 2-column layout conforming strictly to IEEE conference standards.
+- 🤖 **Multi-Agent Pipeline**: Sophisticated content generation across Abstract, Introduction, Methodology, Architecture, Results, and Conclusion.
+- 📊 **Dynamic Diagrams**: Generates **Mermaid.js** flowcharts and system architectures based on your topic.
+- 📐 **Scientific Precision**: Full **MathJax** integration for rendering complex mathematical equations.
+- 📑 **IEEE References**: Automatically generates and formats academic references in IEEE style.
+- ⚡ **Turbocharged LLMs**: Powered by **Groq** (Llama 3.1) for lightning-fast content synthesis.
+- 🎨 **Modern Dashboard**: Sleek, responsive React UI built with TailwindCSS and Shadcn/UI components.
 
 ---
 
-## 🛠️ Tech Stack
+## 🏗 Architecture
 
-- **Language:** Python
-- **LLM Engine:** Ollama (Local LLM Execution)
-- **Vector Search:** FAISS / Sentence Transformers
-- **Web App:** Streamlit
-- **PDF Formatting:** LaTeX
+Virubot employs a distributed architecture to handle the complex requirements of research paper generation:
 
----
-
-## ⚙️ How It Works (Step-by-Step Pipeline)
-
-1. **User Input:** The user provides a research topic via the Streamlit interface.
-2. **Information Retrieval (`fetch_semantic.py` & `rag.py`):** The system searches semantic academic databases, downloads abstracts/metadata, and builds a local FAISS vector database.
-3. **Research Agent (`agents.py`):** Queries the vector DB to retrieve the most factually relevant snippets.
-4. **Analysis Agent (`agents.py`):** Analyzes the retrieved context, draws connections, and creates an outline for the paper.
-5. **Writer Agent (`generator.py`):** Writes the paper section by section (Abstract, Introduction, Methodology, Results, Conclusion) with proper citations.
-6. **PDF Compilation (`latex_writer.py`):** The final markdown/text is converted into an IEEE-styled LaTeX document and compiled into a downloadable PDF.
+1.  **Frontend (React/Vite)**: A high-performance UI for topic input, real-time generation monitoring, and PDF previewing.
+2.  **Node API (Express)**: The primary orchestrator. It manages LLM streaming, handles Mermaid/MathJax rendering via Puppeteer, and manages file persistence.
+3.  **Research Backend (FastAPI)**: Handles heavy-duty data processing, research analysis, and complex agentic workflows using RAG.
 
 ---
 
-## 📦 Modules
+## 🛠 Tech Stack
 
-| Module | Description |
-|--------|-------------|
-| 🔍 `fetch_semantic.py` | Fetches academic papers and metadata related to the topic. |
-| 🗄️ `rag.py` | Handles document embedding and FAISS vector retrieval. |
-| 🕵️‍♂️ `agents.py` | Defines the logic for the Research, Analysis, and Writer agents. |
-| ✍️ `generator.py` | Generates section-wise content orchestrating the multi-agent workflow. |
-| 📜 `latex_writer.py` | Formats output into an IEEE LaTeX template and compiles the PDF. |
-| 💻 `app.py` | The main Streamlit web application providing the user interface. |
+| Component | Technology |
+| :--- | :--- |
+| **Frontend** | React 18, Vite, TailwindCSS, Shadcn/UI, TypeScript |
+| **Orchestration** | Node.js, Express |
+| **Research Engine** | Python 3.10+, FastAPI, Uvicorn |
+| **LLM Engine** | Groq API (Llama 3.1 70B/8B), OpenAI SDK |
+| **PDF Rendering** | Puppeteer (Headless Chrome), HTML5, CSS3 |
+| **Visualization** | Mermaid.js, MathJax |
 
 ---
 
-## 🚀 Installation
+## 🚀 Quick Start
 
-Ensure you have Python 3.8+ installed. You will also need LaTeX installed on your system to compile PDFs (e.g., `texlive` or `miktex`).
+### 1. Prerequisites
+- **Node.js** (v18 or higher)
+- **Python** (v3.10 or higher)
+- **Groq API Key** (Get one at [console.groq.com](https://console.groq.com))
 
-### 1. Clone the Repository
+### 2. Installation
+
+Clone the repository and install dependencies for all modules:
+
 ```bash
-git clone https://github.com/yourusername/ai-research-paper-generator.git
-cd ai-research-paper-generator
-```
+git clone https://github.com/virubot/ResearchPaper_Agent.git
+cd ResearchPaper_Agent
 
-### 2. Install Python Dependencies
-```bash
+# Setup Node Backend
+cd node-backend && npm install
+
+# Setup Frontend
+cd ../frontend && npm install
+
+# Setup Research Backend (Python)
+cd ..
+python -m venv .venv
+source .venv/bin/activate  # Mac/Linux
 pip install -r requirements.txt
 ```
-*(Make sure `streamlit`, `faiss-cpu`, `sentence-transformers`, `requests`, etc., are in your `requirements.txt`)*
 
-### 3. Setup Ollama (Local LLMs)
-Download and install [Ollama](https://ollama.com/). Then, pull the model you plan to use (e.g., `llama3` or `mistral`):
-```bash
-ollama run llama3
+### 3. Configuration
+
+Create a `.env` file in the `node-backend/` directory:
+
+```env
+GROQ_API_KEY=your_groq_api_key_here
+PORT=5001
 ```
 
----
+### 4. Running the Application
 
-## 💻 How to Run
-
-After ensuring the Ollama server is running in the background, start the Streamlit interface:
+Simply run the startup script from the root directory:
 
 ```bash
-streamlit run app.py
+chmod +x start.sh
+./start.sh
 ```
 
-Or, if you prefer running it headless via the terminal:
-
-```bash
-python main.py
-```
-
----
-
-## 🎯 Example Usage
-
-1. Open the Streamlit web app in your browser at `http://localhost:8501`.
-2. Enter your research topic: *"The Impact of Quantum Computing on Cryptography."*
-3. Click **"Generate Paper"**.
-4. Monitor the multi-agent pipeline progress in the UI.
-5. Once complete, click **"Download PDF"** to receive your fully formatted IEEE-style research paper.
+The application will be available at:
+- **Frontend**: `http://localhost:5173`
+- **Node API**: `http://localhost:5001`
+- **Research API**: `http://localhost:8000`
 
 ---
 
 ## 📂 Project Structure
 
 ```text
-ai-research-paper-generator/
-│
-├── app.py                 # Streamlit front-end UI
-├── main.py                # Terminal-based execution script
-├── agents.py              # Multi-agent definitions (Research, Analysis, Writer)
-├── fetch_semantic.py      # Module to fetch academic data
-├── generator.py           # Core logic for paper generation
-├── rag.py                 # RAG implementation with FAISS
-├── latex_writer.py        # LaTeX formatting and PDF compilation
-├── requirements.txt       # Python dependencies
-└── README.md              # Project documentation
+.
+├── frontend/             # React + Vite application (UI/UX)
+├── node-backend/         # Express API & Puppeteer Rendering
+│   ├── services/         # LLM orchestration & PDF logic
+│   ├── routes/           # API Endpoints
+│   └── utils/            # IEEE Templates & CSS
+├── backend/              # FastAPI Research Engine (RAG/Logic)
+├── generated_pdfs/       # Saved research papers
+├── start.sh              # Unified startup script
+└── requirements.txt      # Python dependencies
 ```
 
 ---
 
-## 🔮 Future Improvements
+## 🔧 API Endpoints (Node Backend)
 
-- [ ] **Multi-format Export:** Support for Word (.docx) and Markdown (.md) exports.
-- [ ] **Advanced Graph RAG:** Upgrade from traditional vector RAG to Graph RAG for better semantic relationships.
-- [ ] **Internet Browsing Agent:** Add an agent that actively scrapes the latest web articles dynamically.
-- [ ] **Custom Templates:** Options for APA, MLA, and Harvard citation styles.
+### `POST /api/paper/generate`
+Generates a complete research paper based on the provided topic.
+
+**Request Body:**
+```json
+{
+  "topic": "The Impact of Quantum Computing on Modern Cryptography"
+}
+```
+
+**Response:**
+```json
+{
+  "paper": "<html>...</html>",
+  "title": "Quantum Computing...",
+  "wordCount": 2850,
+  "pageCount": 6
+}
+```
 
 ---
 
-## 🤝 Contribution
+## 🤝 Contributing
 
-Contributions are always welcome! Whether you are a beginner or an experienced developer, feel free to dive in.
+We welcome contributions! Please feel free to submit a Pull Request.
 
 1. Fork the Project
 2. Create your Feature Branch (`git checkout -b feature/AmazingFeature`)
@@ -152,7 +164,12 @@ Contributions are always welcome! Whether you are a beginner or an experienced d
 
 ---
 
-<div align="center">
-  <b>Built with ❤️ using Open Source AI.</b><br>
-  If you found this helpful, please consider leaving a ⭐ on this repository!
-</div>
+## 📜 License
+
+Distributed under the MIT License. See `LICENSE` for more information.
+
+---
+
+<p align="center">
+  Built with ❤️ by <strong>Viren</strong> and the Open Source Community
+</p>

@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+<style>
+  :root {
+    --paper-width: 184mm;
+    --paper-height: 261mm;
+    --column-gap: 4mm;
+    --body-font-size: 10pt;
+    --body-line-height: 1.24;
+    --caption-font-size: 8.5pt;
+    --reference-font-size: 8.5pt;
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+
+  html,
+  body {
+    margin: 0;
+    padding: 0;
+    background: #ffffff;
+    color: #000000;
+    font-family: "Times New Roman", Times, serif;
+  }
+
+  body {
+    width: var(--paper-width);
+    margin: 0 auto;
+  }
+
+  .paper-page {
+    width: var(--paper-width);
+    height: var(--paper-height);
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    background: #ffffff;
+    page-break-after: always;
+  }
+
+  .paper-page:last-child {
+    page-break-after: auto;
+  }
+
+  .page-head {
+    text-align: center;
+    padding: 0 0 6mm;
+  }
+
+  .paper-title {
+    margin: 0;
+    font-size: 24pt;
+    line-height: 1.15;
+    font-weight: 700;
+  }
+
+  .author-name {
+    margin-top: 4mm;
+    font-size: 11pt;
+  }
+
+  .author-affiliation {
+    margin-top: 1.5mm;
+    font-size: 10pt;
+  }
+
+  .page-columns {
+    display: flex;
+    gap: var(--column-gap);
+    width: 100%;
+    flex: 1 1 auto;
+    align-items: flex-start;
+  }
+
+  .column {
+    flex: 1 1 0;
+    width: calc((var(--paper-width) - var(--column-gap)) / 2);
+    overflow: hidden;
+    font-size: var(--body-font-size);
+    line-height: var(--body-line-height);
+    text-align: justify;
+  }
+
+  .column p {
+    margin: 0 0 9pt;
+  }
+
+  .block {
+    margin: 0 0 9pt;
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+
+  h2 {
+    margin: 0 0 6pt;
+    text-align: center;
+    font-size: 10pt;
+    font-weight: 700;
+    font-variant: small-caps;
+    letter-spacing: 0;
+  }
+
+  .abstract-heading {
+    font-variant: normal;
+    text-transform: none;
+  }
+
+  .abstract-paragraph {
+    font-style: italic;
+  }
+
+  .keywords-line {
+    font-style: normal;
+  }
+
+  .keywords-label {
+    font-weight: 700;
+  }
+
+  .figure-block {
+    margin: 2pt 0 10pt;
+  }
+
+  .figure-block .mermaid {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 120pt;
+  }
+
+  .figure-block svg {
+    max-width: 100%;
+    height: auto;
+  }
+
+  figcaption {
+    margin-top: 5pt;
+    text-align: center;
+    font-size: var(--caption-font-size);
+  }
+
+  .equation-shell {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: center;
+    column-gap: 8pt;
+  }
+
+  .equation-content {
+    text-align: center;
+  }
+
+  .equation-number {
+    font-size: 9pt;
+    white-space: nowrap;
+  }
+
+  .equation-caption {
+    margin-top: 4pt;
+    font-size: 9pt;
+  }
+
+  .reference-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 6pt;
+    font-size: var(--reference-font-size);
+    line-height: 1.2;
+    margin: 0 0 6pt;
+  }
+
+  .reference-index {
+    flex: 0 0 auto;
+  }
+
+  .reference-text {
+    flex: 1 1 auto;
+  }
+
+  #staging-root {
+    position: fixed;
+    left: -300mm;
+    top: 0;
+    width: calc((var(--paper-width) - var(--column-gap)) / 2);
+    visibility: hidden;
+    pointer-events: none;
+  }
+
+  #source-flow {
+    width: calc((var(--paper-width) - var(--column-gap)) / 2);
+    font-size: var(--body-font-size);
+    line-height: var(--body-line-height);
+    text-align: justify;
+  }
+
+  #paper-status {
+    position: fixed;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+  }
+
+  @media screen {
+    html,
+    body {
+      background: #e5e7eb;
+    }
+
+    body {
+      padding: 8mm 0;
+    }
+
+    .paper-page {
+      box-shadow: 0 0 0 1px #d1d5db;
+      margin-bottom: 8mm;
+    }
+  }
+
+  @media print {
+    html,
+    body {
+      background: #ffffff;
+    }
+
+    body {
+      padding: 0;
+    }
+
+    .paper-page {
+      box-shadow: none;
+      margin-bottom: 0;
+    }
+  }
+</style>
+</head>
+<body>
+
+<div id="staging-root" aria-hidden="true">
+  <div id="source-flow">
+    {{SOURCE_HTML}}
+  </div>
+</div>
+
+<div id="paper-root"></div>
+<div id="paper-status" data-render-state="pending"></div>
+
+<script>
+  window.__paperRenderState = { state: "pending" };
+
+  const layoutProfiles = [1.28, 1.26, 1.24, 1.22, 1.2];
+
+  function setRenderError(message) {
+    const status = document.getElementById("paper-status");
+    status.dataset.renderState = "error";
+    window.__paperRenderState = { state: "error", error: message };
+  }
+
+  function getSourceBlocks() {
+    return Array.from(document.querySelectorAll("#source-flow > .block"));
+  }
+
+  function createPage(isFirstPage) {
+    const page = document.createElement("section");
+    page.className = `paper-page${isFirstPage ? " first-page" : ""}`;
+    page.innerHTML = isFirstPage
+      ? `
+        <div class="page-head">
+          <div class="paper-title">{{TITLE}}</div>
+          <div class="author-name">{{AUTHOR_NAME}}</div>
+          <div class="author-affiliation">{{AUTHOR_AFFILIATION}}</div>
+        </div>
+        <div class="page-columns">
+          <div class="column"></div>
+          <div class="column"></div>
+        </div>
+      `
+      : `
+        <div class="page-columns">
+          <div class="column"></div>
+          <div class="column"></div>
+        </div>
+      `;
+
+    document.getElementById("paper-root").appendChild(page);
+    syncColumnHeights(page);
+    return page;
+  }
+
+  function syncColumnHeights(page) {
+    const columnsShell = page.querySelector(".page-columns");
+    const header = page.querySelector(".page-head");
+    const availableHeight = page.clientHeight - (header ? header.offsetHeight : 0);
+
+    columnsShell.style.height = `${availableHeight}px`;
+    for (const column of page.querySelectorAll(".column")) {
+      column.style.height = `${availableHeight}px`;
+    }
+  }
+
+  function fits(column) {
+    return column.scrollHeight <= column.clientHeight + 1;
+  }
+
+  function getColumns(page) {
+    return Array.from(page.querySelectorAll(".column"));
+  }
+
+  function paginateBlocks(blocks) {
+    const paperRoot = document.getElementById("paper-root");
+    paperRoot.innerHTML = "";
+
+    let currentPage = createPage(true);
+    let columns = getColumns(currentPage);
+    let columnIndex = 0;
+
+    for (const block of blocks) {
+      let placed = false;
+
+      while (!placed) {
+        const column = columns[columnIndex];
+        const candidate = block.cloneNode(true);
+        column.appendChild(candidate);
+
+        if (fits(column)) {
+          placed = true;
+          continue;
+        }
+
+        column.removeChild(candidate);
+
+        if (!column.children.length) {
+          throw new Error("A content block exceeded the available IEEE column height.");
+        }
+
+        if (columnIndex === 0) {
+          columnIndex = 1;
+        } else {
+          currentPage = createPage(false);
+          columns = getColumns(currentPage);
+          columnIndex = 0;
+        }
+      }
+    }
+  }
+
+  function balanceLastPage() {
+    const pages = Array.from(document.querySelectorAll(".paper-page"));
+    const lastPage = pages.at(-1);
+    if (!lastPage) {
+      return;
+    }
+
+    const [leftColumn, rightColumn] = lastPage.querySelectorAll(".column");
+    if (!leftColumn || !rightColumn || !leftColumn.children.length) {
+      return;
+    }
+
+    let bestDiff = Math.abs(leftColumn.scrollHeight - rightColumn.scrollHeight);
+
+    while (leftColumn.children.length > 1) {
+      const candidate = leftColumn.lastElementChild;
+      rightColumn.prepend(candidate);
+
+      if (!fits(rightColumn)) {
+        leftColumn.appendChild(candidate);
+        break;
+      }
+
+      const diff = Math.abs(leftColumn.scrollHeight - rightColumn.scrollHeight);
+      if (diff <= bestDiff + 2) {
+        bestDiff = diff;
+        continue;
+      }
+
+      rightColumn.removeChild(candidate);
+      leftColumn.appendChild(candidate);
+      break;
+    }
+  }
+
+  function validateLayout() {
+    const pages = Array.from(document.querySelectorAll(".paper-page"));
+    const columns = pages.flatMap((page) => Array.from(page.querySelectorAll(".column")));
+    const visibleText = document.getElementById("paper-root").innerText;
+    const title = document.querySelector(".paper-title")?.textContent?.trim() || "";
+    const headingValues = Array.from(document.querySelectorAll(".paper-page h2")).map((heading) => heading.textContent.trim());
+    const lastPage = pages.at(-1);
+    const lastColumns = lastPage ? Array.from(lastPage.querySelectorAll(".column")) : [];
+    const lastPageDiff = lastColumns.length === 2
+      ? Math.abs(lastColumns[0].scrollHeight - lastColumns[1].scrollHeight)
+      : 0;
+
+    const issues = [];
+
+    if (!document.querySelector(".paper-page .mermaid svg")) {
+      issues.push("Diagram was not rendered to SVG.");
+    }
+
+    if (!document.querySelector(".paper-page mjx-container")) {
+      issues.push("Formula was not rendered by MathJax.");
+    }
+
+    if (/```|\*\*|(^|\n)\s*#{1,6}\s+/m.test(visibleText)) {
+      issues.push("Markdown artifacts remain in the paper body.");
+    }
+
+    if (headingValues.includes(title)) {
+      issues.push("The title was duplicated inside the paper body.");
+    }
+
+    if (columns.some((column) => column.scrollHeight > column.clientHeight + 1)) {
+      issues.push("A column overflow was detected.");
+    }
+
+    if (pages.length < 4 || pages.length > 5) {
+      issues.push(`The layout produced ${pages.length} pages instead of 4-5 pages.`);
+    }
+
+    if (lastPageDiff > 120) {
+      issues.push("The final page columns are not balanced.");
+    }
+
+    return {
+      issues,
+      pageCount: pages.length,
+      lastPageDiff
+    };
+  }
+
+  async function renderMermaid() {
+    if (!window.mermaid) {
+      throw new Error("Mermaid failed to load.");
+    }
+
+    window.mermaid.initialize({
+      startOnLoad: false,
+      securityLevel: "loose",
+      theme: "base",
+      themeVariables: {
+        primaryColor: "#ffffff",
+        primaryBorderColor: "#000000",
+        primaryTextColor: "#000000",
+        lineColor: "#000000",
+        fontFamily: "Times New Roman"
+      }
+    });
+
+    const nodes = Array.from(document.querySelectorAll("#staging-root .mermaid"));
+    await window.mermaid.run({ nodes });
+
+    for (const node of nodes) {
+      const svg = node.querySelector("svg");
+      if (svg) {
+        svg.removeAttribute("height");
+        svg.style.maxWidth = "100%";
+        svg.style.height = "auto";
+      }
+    }
+  }
+
+  async function renderMath() {
+    if (!window.MathJax) {
+      throw new Error("MathJax failed to load.");
+    }
+
+    if (window.MathJax.startup && window.MathJax.startup.promise) {
+      await window.MathJax.startup.promise;
+    }
+
+    await window.MathJax.typesetPromise([document.getElementById("staging-root")]);
+  }
+
+  async function renderPaperLayout() {
+    await renderMermaid();
+    await renderMath();
+
+    let finalResult = null;
+
+    for (const lineHeight of layoutProfiles) {
+      document.documentElement.style.setProperty("--body-line-height", String(lineHeight));
+      paginateBlocks(getSourceBlocks());
+      balanceLastPage();
+      finalResult = validateLayout();
+
+      if (!finalResult.issues.length) {
+        break;
+      }
+    }
+
+    if (!finalResult || finalResult.issues.length) {
+      throw new Error(finalResult?.issues.join(" ") || "Layout validation failed.");
+    }
+
+    document.getElementById("paper-status").dataset.renderState = "ready";
+    window.__paperRenderState = {
+      state: "ready",
+      pageCount: finalResult.pageCount,
+      lastPageDiff: finalResult.lastPageDiff
+    };
+  }
+
+  window.addEventListener("load", async () => {
+    try {
+      await renderPaperLayout();
+    } catch (error) {
+      setRenderError(error.message || "Unknown render error.");
+    }
+  });
+</script>
+
+</body>
+</html>
