@@ -1,4 +1,4 @@
-# 📄 Virubot: Autonomous Research Agent 🚀
+#Autonomous Research Agent 🚀
 
 [![MIT License](https://img.shields.io/badge/License-MIT-green.svg)](https://opensource.org/licenses/MIT)
 [![Node.js](https://img.shields.io/badge/Node.js-v18+-68a063.svg)](https://nodejs.org/)
@@ -7,7 +7,7 @@
 [![Groq](https://img.shields.io/badge/Powered_by-Groq-orange.svg)](https://groq.com/)
 [![Puppeteer](https://img.shields.io/badge/PDF_Engine-Puppeteer-blue.svg)](https://pptr.dev/)
 
-**Virubot** is a state-of-the-art, multi-service autonomous agent designed to generate professional, high-fidelity IEEE-style research papers. By orchestrating a hybrid backend (FastAPI + Node.js) and a modern React frontend, it transforms a single topic into a complete, print-ready academic document with zero manual formatting required.
+**Agent** is a state-of-the-art, multi-service autonomous agent designed to generate professional, high-fidelity IEEE-style research papers. By orchestrating a hybrid backend (FastAPI + Node.js) and a modern React frontend, it transforms a single topic into a complete, print-ready academic document with zero manual formatting required.
 
 ---
 
