@@ -171,5 +171,5 @@ Distributed under the MIT License. See `LICENSE` for more information.
 ---
 
 <p align="center">
-  Built with ❤️ by <strong>**virubot**</strong> and the Open Source Community
+  Built with ❤️ by <strong>Virubot</strong> and the Open Source Community
 </p>
