@@ -3,8 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
 <style>
   :root {
     --paper-width: 184mm;
@@ -398,13 +397,7 @@
 
     const issues = [];
 
-    if (!document.querySelector(".paper-page .mermaid svg")) {
-      issues.push("Diagram was not rendered to SVG.");
-    }
 
-    if (!document.querySelector(".paper-page mjx-container")) {
-      issues.push("Formula was not rendered by MathJax.");
-    }
 
     if (/```|\*\*|(^|\n)\s*#{1,6}\s+/m.test(visibleText)) {
       issues.push("Markdown artifacts remain in the paper body.");
@@ -433,52 +426,7 @@
     };
   }
 
-  async function renderMermaid() {
-    if (!window.mermaid) {
-      throw new Error("Mermaid failed to load.");
-    }
-
-    window.mermaid.initialize({
-      startOnLoad: false,
-      securityLevel: "loose",
-      theme: "base",
-      themeVariables: {
-        primaryColor: "#ffffff",
-        primaryBorderColor: "#000000",
-        primaryTextColor: "#000000",
-        lineColor: "#000000",
-        fontFamily: "Times New Roman"
-      }
-    });
-
-    const nodes = Array.from(document.querySelectorAll("#staging-root .mermaid"));
-    await window.mermaid.run({ nodes });
-
-    for (const node of nodes) {
-      const svg = node.querySelector("svg");
-      if (svg) {
-        svg.removeAttribute("height");
-        svg.style.maxWidth = "100%";
-        svg.style.height = "auto";
-      }
-    }
-  }
-
-  async function renderMath() {
-    if (!window.MathJax) {
-      throw new Error("MathJax failed to load.");
-    }
-
-    if (window.MathJax.startup && window.MathJax.startup.promise) {
-      await window.MathJax.startup.promise;
-    }
-
-    await window.MathJax.typesetPromise([document.getElementById("staging-root")]);
-  }
-
   async function renderPaperLayout() {
-    await renderMermaid();
-    await renderMath();
 
     let finalResult = null;
 
@@ -505,7 +453,7 @@
     };
   }
 
-  window.addEventListener("load", async () => {
+  window.addEventListener("DOMContentLoaded", async () => {
     try {
       await renderPaperLayout();
     } catch (error) {

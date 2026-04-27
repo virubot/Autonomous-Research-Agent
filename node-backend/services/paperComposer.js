@@ -9,13 +9,8 @@ const SECTION_DEFINITIONS = [
   { key: "conclusion", heading: "V. CONCLUSION" }
 ];
 
-const DEFAULT_FLOW = [
-  "Problem Definition",
-  "Data Acquisition",
-  "Feature Analysis",
-  "Decision Engine",
-  "Evaluation Output"
-];
+// No default flow — architecture diagrams are only generated when the LLM
+// returns topic-specific flow steps. Generic pipelines are forbidden.
 
 const DEFAULT_KEYWORDS = [
   "IEEE formatting",
@@ -35,7 +30,8 @@ const DEFAULT_REFERENCES = [
   "M. Ivanov, \"Column Balancing for Scholarly Publishing Layout Engines,\" Digital Typography Letters, vol. 5, no. 1, pp. 12-19, 2022."
 ];
 
-const EQUATION_TEX = String.raw`M = \frac{1}{T} \sum_{i=1}^{T} S(E(X_i), Y_i)`;
+// No hardcoded equation — equations are only included when the LLM returns
+// a topic-specific formula. Generic evaluation metrics are forbidden.
 
 function stripMarkup(value) {
   return String(value ?? "")
@@ -104,18 +100,40 @@ function normalizeParagraphs(value, title) {
     .filter((paragraph) => paragraph && paragraph !== title);
 }
 
-function normalizeFlow(flow, topic) {
+// Generic flow steps that are FORBIDDEN — if LLM returns these, treat as empty
+const FORBIDDEN_FLOW_STEPS = [
+  "problem definition",
+  "data acquisition",
+  "feature analysis",
+  "decision engine",
+  "evaluation output",
+  "problem",
+  "data",
+  "feature",
+  "decision"
+];
+
+function isGenericFlow(steps) {
+  const lowered = steps.map((s) => s.toLowerCase().trim());
+  const genericCount = lowered.filter((s) =>
+    FORBIDDEN_FLOW_STEPS.some((f) => s.includes(f))
+  ).length;
+  // If more than half the steps are generic, reject the entire flow
+  return genericCount >= Math.ceil(steps.length / 2);
+}
+
+function normalizeFlow(flow) {
   const cleaned = (Array.isArray(flow) ? flow : String(flow ?? "").split(/[>\n,]/))
     .map((entry) => stripMarkup(entry))
     .filter(Boolean)
     .slice(0, 6);
 
-  if (cleaned.length >= 4) {
+  if (cleaned.length >= 4 && !isGenericFlow(cleaned)) {
     return cleaned;
   }
 
-  const topicLabel = toTitleCase(topic).slice(0, 30) || "Research Topic";
-  return [topicLabel, ...DEFAULT_FLOW].slice(0, 5);
+  // Return empty — no diagram will be rendered
+  return [];
 }
 
 function normalizeReferences(references) {
@@ -149,28 +167,20 @@ function createSectionBlocks(heading, paragraphs) {
   ];
 }
 
-function buildMermaidDiagram(flow) {
-  const sanitizeMermaidLabel = (value) =>
-    stripMarkup(value)
-      .replace(/[<>{}\[\]"]/g, "")
-      .replace(/&/g, "and");
+function buildTextDiagram(flow) {
+  if (!flow || flow.length < 3) return null;
+
+  const sanitizeLabel = (value) => stripMarkup(value).replace(/[<>{}\[\]"]/g, "");
 
   const sanitizedFlow = flow
     .slice(0, 6)
-    .map((step) => sanitizeMermaidLabel(step))
+    .map((step) => sanitizeLabel(step))
     .filter(Boolean);
 
-  const nodes = sanitizedFlow.length >= 4 ? sanitizedFlow : DEFAULT_FLOW;
-  const nodeIds = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
-  const edges = nodes
-    .map((step, index) => `${nodeIds[index]}["${step}"]`)
-    .join("\n");
-  const links = nodes
-    .slice(0, -1)
-    .map((_, index) => `${nodeIds[index]} --> ${nodeIds[index + 1]}`)
-    .join("\n");
+  if (sanitizedFlow.length < 3) return null;
 
-  return `flowchart TD\n${edges}\n${links}`;
+  const items = sanitizedFlow.map(step => escapeHtml(step)).join(" &rarr; ");
+  return `<div class="structured-diagram" style="text-align: center; font-weight: bold; margin: 15pt 0;">System Flow:<br>${items}</div>`;
 }
 
 function buildReferenceBlocks(references) {
@@ -183,11 +193,20 @@ function buildReferenceBlocks(references) {
   ];
 }
 
+/**
+ * Sanitize final HTML to strip any generic content that slipped through.
+ */
+function removeGenericContent(html) {
+  return html
+    .replace(/M\s*=\s*\\?f?r?a?c?\{?1\}?\s*\/?\s*T[\s\S]*?Y_?i\)?/g, "")
+    .replace(/Problem\s*(?:Definition)?\s*→\s*Data\s*(?:Acquisition)?\s*→\s*Feature\s*(?:Analysis)?\s*→\s*Decision/gi, "");
+}
+
 export function buildPaperDocument(rawPaper, topic) {
   const title = normalizeTitle(rawPaper?.title, topic);
   const abstract = stripMarkup(rawPaper?.abstract);
   const keywords = normalizeKeywords(rawPaper?.keywords, topic);
-  const architectureFlow = normalizeFlow(rawPaper?.architectureFlow ?? rawPaper?.systemArchitectureFlow, topic);
+  const architectureFlow = normalizeFlow(rawPaper?.architectureFlow ?? rawPaper?.systemArchitectureFlow);
 
   const sections = SECTION_DEFINITIONS.map(({ key, heading }) => ({
     key,
@@ -221,12 +240,16 @@ export function buildPaperDocument(rawPaper, topic) {
     .slice(Math.max(1, Math.min(2, architectureParagraphs.length)))
     .map((paragraph) => `<p class="block body-paragraph">${escapeHtml(paragraph)}</p>`);
 
-  const diagramBlock = `
+  // CONDITIONAL diagram — only rendered if LLM returned topic-specific flow steps
+  const textDiagram = buildTextDiagram(architectureFlow);
+  const diagramBlock = textDiagram
+    ? `
     <figure class="block figure-block">
-      <div class="mermaid">${buildMermaidDiagram(architectureFlow)}</div>
-      <figcaption>Fig. 1. Automated processing architecture used to organize the study workflow.</figcaption>
+      ${textDiagram}
+      <figcaption>Fig. 1. System architecture for ${escapeHtml(toTitleCase(topic))}.</figcaption>
     </figure>
-  `;
+  `
+    : "";
 
   const resultsParagraphs = sections[3].paragraphs;
   const resultsLead = createSectionBlocks(
@@ -237,19 +260,29 @@ export function buildPaperDocument(rawPaper, topic) {
     .slice(Math.max(1, Math.min(2, resultsParagraphs.length)))
     .map((paragraph) => `<p class="block body-paragraph">${escapeHtml(paragraph)}</p>`);
 
-  const equationBlock = `
+  // CONDITIONAL equation — only rendered if LLM returned a topic-specific formula
+  let equationBlock = "";
+  if (rawPaper?.equation && rawPaper.equation.plainText && rawPaper.equation.caption) {
+    const eqText = String(rawPaper.equation.plainText);
+    const eqCaption = String(rawPaper.equation.caption);
+    // Final guard: reject the forbidden generic formula even if LLM returned it
+    const isForbidden = /1\/T\s*\\?sum|S\(E\(X/i.test(eqText);
+    if (!isForbidden) {
+      equationBlock = `
     <div class="block equation-block">
       <div class="equation-shell">
-        <div class="equation-content">\\[ ${EQUATION_TEX} \\]</div>
+        <div class="equation-content" style="font-family: monospace; font-size: 1.1em;">${escapeHtml(eqText)}</div>
         <div class="equation-number">(1)</div>
       </div>
-      <p class="equation-caption">Model accuracy is evaluated as the average similarity between encoded outputs and ground-truth targets across the test horizon.</p>
+      <p class="equation-caption">${escapeHtml(eqCaption)}</p>
     </div>
   `;
+    }
+  }
 
   const conclusionBlocks = createSectionBlocks(sections[4].heading, sections[4].paragraphs);
 
-  const sourceHtml = [
+  const contentBlocks = [
     abstractBlock,
     ...introductionBlocks,
     ...methodologyBlocks,
@@ -261,7 +294,10 @@ export function buildPaperDocument(rawPaper, topic) {
     ...resultsTail,
     ...conclusionBlocks,
     ...buildReferenceBlocks(references)
-  ].join("\n");
+  ].filter(Boolean);
+
+  // Final sanitization pass to catch any generic content that slipped through
+  const sourceHtml = removeGenericContent(contentBlocks.join("\n"));
 
   return {
     title,

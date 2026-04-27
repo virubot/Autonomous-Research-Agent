@@ -30,7 +30,7 @@ function buildHtml({ title, authorName, affiliation, sourceHtml }) {
 
 export async function generatePDF(paperDocument) {
   const browser = await puppeteer.launch({
-    headless: true,
+    headless: "new",
     args: ["--no-sandbox", "--disable-setuid-sandbox"]
   });
 
@@ -42,12 +42,15 @@ export async function generatePDF(paperDocument) {
   await page.setViewport({ width: 1600, height: 2200, deviceScaleFactor: 1 });
 
   const html = buildHtml(paperDocument);
-  await page.setContent(html, { waitUntil: "networkidle0" });
+  await page.setContent(html, {
+    waitUntil: "domcontentloaded",
+    timeout: 0
+  });
 
   await page.waitForFunction(() => {
     const state = window.__paperRenderState;
     return state && state.state !== "pending";
-  }, { timeout: 30000 });
+  }, { timeout: 0 });
 
   const renderState = await page.evaluate(() => window.__paperRenderState);
   if (!renderState || renderState.state !== "ready") {

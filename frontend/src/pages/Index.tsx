@@ -256,18 +256,6 @@ const Index = () => {
                   <div className="glass-subtle flex rounded-xl p-1">
                     <button
                       type="button"
-                      onClick={() => setMode("paper")}
-                      className={`ring-focus flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-[12px] font-medium transition-colors ${
-                        mode === "paper"
-                          ? "bg-primary text-primary-foreground"
-                          : "text-muted-foreground hover:bg-foreground/[0.06] hover:text-foreground"
-                      }`}
-                    >
-                      <FileText className="h-3.5 w-3.5" />
-                      Paper Mode
-                    </button>
-                    <button
-                      type="button"
                       onClick={() => setMode("chat")}
                       className={`ring-focus flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-[12px] font-medium transition-colors ${
                         mode === "chat"

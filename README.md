@@ -1,4 +1,4 @@
-**AI Research Assistant 🚀**
+# AI Research Agent 🚀
 
 [![MIT License](https://img.shields.io/badge/License-MIT-green.svg)](https://opensource.org/licenses/MIT)
 [![Node.js](https://img.shields.io/badge/Node.js-v18+-68a063.svg)](https://nodejs.org/)
