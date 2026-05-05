@@ -6,6 +6,7 @@ import { ChatMessage, MessageBubble, TypingIndicator } from "@/components/ChatMe
 import { ChatInput } from "@/components/ChatInput";
 import { PaperGenerator } from "@/components/PaperGenerator";
 import { SourcesPanel } from "@/components/SourcesPanel";
+import { LaboratoryPanel } from "@/components/LaboratoryPanel";
 import { askAssistant, generatePaper } from "@/lib/api";
 
 type ChatRecord = ChatSummary & { messages: ChatMessage[] };
@@ -289,6 +290,7 @@ const Index = () => {
             <div className="glass rounded-2xl px-3 py-3">
               <SourcesPanel sources={activeSources} />
             </div>
+            <LaboratoryPanel />
           </aside>
         </div>
       </main>

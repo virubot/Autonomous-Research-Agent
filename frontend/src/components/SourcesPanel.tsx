@@ -15,24 +15,27 @@ export const SourcesPanel = ({ sources = [] }: { sources?: AgentSource[] }) => {
           No sources collected yet.
         </div>
       ) : (
-        <ul className="divide-y divide-border/30">
+        <ul className="space-y-2">
           {sources.map((source) => (
             <li key={source.ref_id}>
               <a
                 href={source.url || "#"}
                 target={source.url ? "_blank" : undefined}
                 rel={source.url ? "noreferrer" : undefined}
-                className="group flex items-start justify-between gap-3 rounded-md px-2 py-3 transition-colors hover:bg-foreground/[0.04]"
+                className="group flex flex-col gap-2 rounded-lg border border-white/5 bg-foreground/[0.02] px-3 py-3 shadow-sm backdrop-blur-md transition-all hover:border-primary/30 hover:bg-foreground/[0.05]"
               >
-                <div className="min-w-0 flex-1">
-                  <p className="line-clamp-2 text-[13px] font-medium leading-snug text-foreground transition-colors group-hover:text-primary">
-                    [{source.ref_id}] {source.title}
+                <div className="flex items-start justify-between gap-2">
+                  <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded bg-primary/20 text-[10px] font-bold text-primary">
+                    {source.ref_id}
+                  </span>
+                  <p className="line-clamp-2 min-w-0 flex-1 text-[13px] font-semibold leading-snug text-foreground transition-colors group-hover:text-primary">
+                    {source.title}
                   </p>
-                  <p className="mt-1 line-clamp-3 text-[11px] text-muted-foreground">
-                    {source.snippet || source.url}
-                  </p>
+                  <ExternalLink className="mt-0.5 h-3.5 w-3.5 shrink-0 text-muted-foreground/40 opacity-0 transition-all group-hover:opacity-100 group-hover:text-primary" />
                 </div>
-                <ExternalLink className="mt-0.5 h-3.5 w-3.5 shrink-0 text-muted-foreground/60 opacity-0 transition-all group-hover:opacity-100 group-hover:text-primary" />
+                <p className="line-clamp-2 text-[11px] leading-relaxed text-muted-foreground/80 pl-7">
+                  {source.snippet || source.url}
+                </p>
               </a>
             </li>
           ))}

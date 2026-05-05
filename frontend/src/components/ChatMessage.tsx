@@ -23,10 +23,10 @@ export const MessageBubble = ({ message }: { message: ChatMessage }) => {
       )}
       <div
         className={cn(
-          "max-w-[78%] px-4 py-2.5 text-[14px] leading-relaxed",
+          "max-w-[78%] px-4 py-3 text-[14px] leading-relaxed",
           isUser
-            ? "rounded-2xl rounded-tr-md bg-[hsl(var(--bubble-user))]/85 text-[hsl(var(--bubble-user-fg))] shadow-soft backdrop-blur-sm"
-            : "text-[hsl(var(--bubble-ai-fg))]"
+            ? "rounded-2xl rounded-tr-md bg-[hsl(var(--bubble-user))]/60 text-[hsl(var(--bubble-user-fg))] shadow-[0_8px_32px_0_rgba(0,0,0,0.36)] backdrop-blur-lg border border-white/10"
+            : "rounded-2xl rounded-tl-md bg-white/5 text-[hsl(var(--bubble-ai-fg))] shadow-[0_8px_32px_0_rgba(0,0,0,0.36)] backdrop-blur-lg border border-white/5"
         )}
       >
         {isUser ? <p className="whitespace-pre-wrap">{message.content}</p> : <MermaidRenderer content={message.content} />}
