@@ -1,12 +1,14 @@
 import { useState } from "react";
 import { ChevronDown, FileText, Loader2, CheckCircle2 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { generatePaper } from "@/lib/api";
 
 export const PaperGenerator = () => {
   const [open, setOpen] = useState(true);
   const [topic, setTopic] = useState("");
   const [state, setState] = useState<"idle" | "loading" | "done">("idle");
   const [paper, setPaper] = useState<string>("");
+  const [driveLink, setDriveLink] = useState<string | null>(null);
 
   const handleGenerate = async () => {
     if (!topic.trim()) {
@@ -18,30 +20,18 @@ export const PaperGenerator = () => {
 
     setState("loading");
     setPaper("");
+    setDriveLink(null);
 
     try {
-      const res = await fetch("http://localhost:5001/api/generate-paper", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({ topic: topic.trim() })
-      });
-      const data = await res.json();
-      
-      if (data.error) throw new Error(data.error);
-
-      setPaper(data.paper);
+      const data = await generatePaper(topic.trim(), true);
+      setPaper(data.output);
+      setDriveLink(data.drive_link);
       setState("done");
     } catch (error) {
       console.error("Paper generation failed:", error);
       setState("idle");
       alert(error instanceof Error ? error.message : "Paper generation failed.");
     }
-  };
-
-  const handleDownload = () => {
-    window.open("http://localhost:5001/download", "_blank");
   };
 
   return (
@@ -110,13 +100,29 @@ export const PaperGenerator = () => {
                     Draft on <span className="font-medium">"{topic}"</span> is ready.
                   </span>
                 </div>
-                
+
                 <button
-                  onClick={handleDownload}
-                  className="ring-focus flex w-full items-center justify-center gap-2 rounded-xl bg-secondary/70 px-3 py-2 text-[13px] font-medium text-foreground transition-colors hover:bg-secondary"
+                  type="button"
+                  className="ring-focus flex w-full items-center justify-center gap-2 rounded-xl bg-secondary/70 px-3 py-2 text-[13px] font-medium text-foreground transition-colors"
                 >
-                  Download PDF
+                  {driveLink ? "Drive upload complete" : "Generated in backend"}
                 </button>
+                {driveLink && (
+                  <a
+                    href={driveLink}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="block text-center text-[12px] text-primary hover:underline"
+                  >
+                    Open in Google Drive
+                  </a>
+                )}
+                {paper && (
+                  <div className="rounded-xl bg-foreground/[0.04] px-3 py-2 text-[12px] text-muted-foreground">
+                    {paper.slice(0, 220)}
+                    {paper.length > 220 ? "..." : ""}
+                  </div>
+                )}
               </>
             )}
           </div>

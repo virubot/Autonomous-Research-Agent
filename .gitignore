@@ -17,6 +17,8 @@ npm-debug.log*
 
 # Output
 generated_pdfs/
+generated_outputs/
+uploads/
 *.pdf
 *.tex
 

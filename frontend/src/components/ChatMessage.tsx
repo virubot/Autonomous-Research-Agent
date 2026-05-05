@@ -1,11 +1,15 @@
 import { cn } from "@/lib/utils";
 import { Sparkles, User } from "lucide-react";
 import { MermaidRenderer } from "@/components/MermaidRenderer";
+import type { AgentSource } from "@/lib/api";
 
 export type ChatMessage = {
   id: string;
   role: "user" | "assistant";
   content: string;
+  sources?: AgentSource[];
+  steps?: string[];
+  driveLink?: string | null;
 };
 
 export const MessageBubble = ({ message }: { message: ChatMessage }) => {

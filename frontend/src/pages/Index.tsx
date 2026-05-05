@@ -55,6 +55,10 @@ const Index = () => {
   const scrollRef = useRef<HTMLDivElement>(null);
 
   const active = chats.find((c) => c.id === activeId)!;
+  const latestAssistantWithSources = [...active.messages]
+    .reverse()
+    .find((message) => message.role === "assistant" && (message.sources?.length ?? 0) > 0);
+  const activeSources = latestAssistantWithSources?.sources ?? [];
 
   useEffect(() => {
     // Auto-collapse on small screens
@@ -87,15 +91,18 @@ const Index = () => {
     setIsThinking(true);
 
     try {
-      const content =
+      const data =
         mode === "paper"
-          ? (await generatePaper(text)).paper ?? "Paper generation returned no content."
-          : (await askAssistant(text)).answer ?? "No useful research data found.";
+          ? await generatePaper(text)
+          : await askAssistant(text);
 
       const aiMsg: ChatMessage = {
         id: crypto.randomUUID(),
         role: "assistant",
-        content,
+        content: data.output || "No useful research data found.",
+        sources: data.sources,
+        steps: data.steps,
+        driveLink: data.drive_link,
       };
       setChats((prev) => prev.map((c) => (c.id === chatId ? { ...c, messages: [...c.messages, aiMsg] } : c)));
     } catch (error) {
@@ -280,7 +287,7 @@ const Index = () => {
           <aside className="hidden w-80 shrink-0 flex-col gap-5 overflow-y-auto px-5 py-6 lg:flex">
             <PaperGenerator />
             <div className="glass rounded-2xl px-3 py-3">
-              <SourcesPanel />
+              <SourcesPanel sources={activeSources} />
             </div>
           </aside>
         </div>

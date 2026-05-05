@@ -142,7 +142,7 @@ export async function chatResponse(prompt) {
 
     const res = await client.chat.completions.create({
       model: "llama-3.1-8b-instant",
-      max_tokens: 4000,
+      max_tokens: 4500,
       messages: [
         {
           role: "system",
@@ -249,9 +249,9 @@ ${baseRules}
 FORMAT:
 {
   "${section}": ${section === "references"
-    ? '["reference1", "reference2", "reference3", "reference4", "reference5", "reference6"]'
-    : '["paragraph1", "paragraph2", "paragraph3", "paragraph4"]'
-  }
+      ? '["reference1", "reference2", "reference3", "reference4", "reference5", "reference6"]'
+      : '["paragraph1", "paragraph2", "paragraph3", "paragraph4"]'
+    }
 }`;
 }
 
