@@ -1,169 +1,194 @@
-<div align="center">
-  <img src="https://raw.githubusercontent.com/virubot/Autonomous-Research-Agent/main/frontend/public/vite.svg" width="120" alt="Logo" />
-  <h1>⚡ Autonomous Research Agent</h1>
-  <p><em>The ultimate AI-powered multi-agent system for autonomous academic research, literature review, and publication-ready paper generation.</em></p>
-  
-  <p>
-    <a href="https://github.com/virubot/Autonomous-Research-Agent/stargazers"><img src="https://img.shields.io/github/stars/virubot/Autonomous-Research-Agent?style=for-the-badge&color=facc15" alt="Stars" /></a>
-    <a href="https://github.com/virubot/Autonomous-Research-Agent/network/members"><img src="https://img.shields.io/github/forks/virubot/Autonomous-Research-Agent?style=for-the-badge&color=3b82f6" alt="Forks" /></a>
-    <a href="https://github.com/virubot/Autonomous-Research-Agent/issues"><img src="https://img.shields.io/github/issues/virubot/Autonomous-Research-Agent?style=for-the-badge&color=ef4444" alt="Issues" /></a>
-    <a href="https://github.com/virubot/Autonomous-Research-Agent/blob/main/LICENSE"><img src="https://img.shields.io/github/license/virubot/Autonomous-Research-Agent?style=for-the-badge&color=10b981" alt="License" /></a>
-  </p>
+<p align="center">
+  <img src="docs/assets/autonomous-research-banner.png" width="100%" alt="Autonomous Research Agent Banner"/>
+</p>
 
-  <p>
-    <a href="#-features">Features</a> •
-    <a href="#-multi-agent-architecture">Architecture</a> •
-    <a href="#-quick-start">Quick Start</a> •
-    <a href="#-api-documentation">API</a>
-  </p>
-  
-  <img src="https://via.placeholder.com/1000x500/09090b/ffffff?text=Cinematic+Dashboard+Preview" alt="Dashboard Preview" width="100%" />
-</div>
+<h1 align="center">
+⚡ Autonomous Research Agent
+</h1>
+
+<p align="center">
+AI-powered multi-agent academic research platform for autonomous IEEE paper generation, semantic retrieval, PDF intelligence, and citation-aware reasoning.
+</p>
+
+<p align="center">
+  <img src="https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white" alt="Python" />
+  <img src="https://img.shields.io/badge/FastAPI-009688?style=for-the-badge&logo=fastapi&logoColor=white" alt="FastAPI" />
+  <img src="https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB" alt="React" />
+  <img src="https://img.shields.io/badge/Vite-B73BFE?style=for-the-badge&logo=vite&logoColor=FFD62E" alt="Vite" />
+  <img src="https://img.shields.io/badge/Vertex_AI-4285F4?style=for-the-badge&logo=googlecloud&logoColor=white" alt="Vertex AI" />
+  <img src="https://img.shields.io/badge/Gemini-8E75B2?style=for-the-badge&logo=googlegemini&logoColor=white" alt="Gemini" />
+  <img src="https://img.shields.io/badge/RAG-FF5722?style=for-the-badge&logo=databricks&logoColor=white" alt="RAG" />
+  <img src="https://img.shields.io/badge/AI_Agents-000000?style=for-the-badge&logo=openai&logoColor=white" alt="AI Agents" />
+  <img src="https://img.shields.io/badge/License-MIT-10b981?style=for-the-badge" alt="License" />
+</p>
+
+<p align="center">
+  <a href="#-overview">Overview</a> •
+  <a href="#-features">Features</a> •
+  <a href="#%EF%B8%8F-system-architecture">Architecture</a> •
+  <a href="#%E2%9A%99%EF%B8%8F-quick-start">Quick Start</a> •
+  <a href="#-api-documentation">API</a>
+</p>
 
 ---
 
 ## 🚀 Overview
 
-**Autonomous Research Agent** is a production-grade, multi-agent AI orchestrator designed to fully automate the academic research lifecycle. Moving beyond simple RAG pipelines, this system leverages advanced planning, real-time web search, deep PDF/OCR extraction, and strict LaTeX compilation to generate high-fidelity, IEEE/APA/ACM-compliant research papers autonomously.
+**Autonomous Research Agent** is a production-grade, multi-agent AI platform built to revolutionize the academic and technical R&D lifecycle. It transcends simple RAG chatbots by acting as an autonomous execution engine that synthesizes complex ideas, retrieves evidence via DuckDuckGo and deep PDF parsing, manages persistent memory, and automatically generates high-fidelity, citation-grounded research papers formatted strictly in IEEE, APA, or ACM templates.
 
-Built with an enterprise-ready FastAPI backend and a premium React/Vite frontend, it transforms raw concepts or uploaded documents into structured, deeply researched, and accurately cited academic literature.
-
-### Why This Matters?
-Modern academic and corporate R&D suffers from severe context fragmentation. Researchers spend 80% of their time finding sources, formatting citations, and organizing PDFs. This system collapses that workflow into a single cohesive, agentic pipeline.
+Powered by Google's **Vertex AI (Gemini 2.5 Flash)** and orchestrated via a high-performance **FastAPI** backend, the agent executes tasks across a decentralized workflow before delivering results to a cinematic **React/Vite** dashboard.
 
 ---
 
-## ✨ Enterprise-Grade Features
+## ✨ Features
 
 <div align="center">
   <table>
     <tr>
-      <td><b>🤖 Multi-Agent Orchestration</b><br/>Dynamic step-by-step planning and tool execution powered by Vertex AI (Gemini 2.5).</td>
-      <td><b>📚 Deep Document Parsing</b><br/>Robust text extraction from PDFs and OCR (Tesseract) for image-heavy documents.</td>
+      <td><b>🤖 Multi-Agent Engine</b><br/>Decentralized execution using Planner, Research, and Synthesis agents.</td>
+      <td><b>📚 PDF Intelligence</b><br/>Deep extraction using PyPDF and OCR with Tesseract for image-heavy documents.</td>
     </tr>
     <tr>
-      <td><b>⚙️ Model Context Protocol (MCP)</b><br/>Fully integrated MCP server allowing seamless, dynamic discovery of external tools.</td>
-      <td><b>📝 High-Fidelity LaTeX Engine</b><br/>Native support for IEEE, APA, and ACM templates. Generates conference-ready PDFs.</td>
+      <td><b>🔍 Dynamic RAG & Search</b><br/>Live web citation discovery combined with SQLite-backed memory stores.</td>
+      <td><b>📝 LaTeX Compilation</b><br/>Automated IEEE, APA, and ACM paper generation directly to PDF.</td>
     </tr>
     <tr>
-      <td><b>🔍 Autonomous Web Search</b><br/>Real-time DuckDuckGo integration for citation discovery and context gathering.</td>
-      <td><b>🧠 Unified Memory Store</b><br/>Persistent SQLite vector/memory storage bridging context across agentic sessions.</td>
+      <td><b>⚙️ Model Context Protocol</b><br/>MCP integration allowing dynamic runtime tool discovery and scaling.</td>
+      <td><b>☁️ Automated Export</b><br/>Direct integrations with Google Drive for seamless deliverable handoffs.</td>
     </tr>
     <tr>
-      <td><b>💻 Cinematic UI/UX</b><br/>Responsive React dashboard built with Tailwind CSS, Shadcn UI, and Framer Motion.</td>
-      <td><b>☁️ Cloud Integrations</b><br/>Automated uploading of compiled PDFs and assets to Google Drive.</td>
+      <td><b>💻 Cinematic Dashboard</b><br/>Dark-mode native, Framer Motion-powered React UI with live markdown streaming.</td>
+      <td><b>🔒 Enterprise Security</b><br/>Robust exception handling, isolated execution paths, and secret management.</td>
     </tr>
   </table>
 </div>
 
 ---
 
-## 🧠 Multi-Agent Architecture
+## 📸 Dashboard Preview
 
-The orchestration layer is driven by a decentralized agentic topology. A central Planner Agent decomposes complex prompts into sub-tasks, delegating them to specialized worker nodes.
-
-```mermaid
-flowchart TD
-    classDef user fill:#3b82f6,stroke:#1d4ed8,stroke-width:2px,color:#fff
-    classDef agent fill:#8b5cf6,stroke:#6d28d9,stroke-width:2px,color:#fff
-    classDef tool fill:#10b981,stroke:#047857,stroke-width:2px,color:#fff
-    classDef output fill:#f59e0b,stroke:#b45309,stroke-width:2px,color:#fff
-
-    User[👤 User Request]:::user --> Executor[🧠 Agent Executor & Planner]:::agent
-    
-    Executor -->|Tool Discovery| MCP[⚙️ MCP Server]:::tool
-    
-    Executor --> SearchAgent[🔍 Research Agent]:::agent
-    Executor --> DocAgent[📄 Document Agent]:::agent
-    Executor --> SynthesisAgent[✍️ Synthesis Agent]:::agent
-    
-    SearchAgent --> Web[🌐 DuckDuckGo Search]:::tool
-    DocAgent --> PDF[📑 PyPDF / OCR]:::tool
-    
-    SearchAgent --> Mem[(💾 SQLite Memory Store)]:::tool
-    DocAgent --> Mem
-    
-    Mem --> SynthesisAgent
-    SynthesisAgent --> LLM[🧠 Vertex AI / Gemini 2.5]:::tool
-    
-    LLM --> JSON[📊 Structured Paper Data]:::output
-    JSON --> Compiler[⚙️ LaTeX PDF Generator]:::tool
-    
-    Compiler --> Final[📄 IEEE / APA / ACM PDF]:::output
-    Compiler --> Drive[☁️ Google Drive]:::tool
-```
+<p align="center">
+  <img src="docs/screenshots/dashboard.png" width="90%" alt="Dashboard Overview"/>
+</p>
 
 ---
 
-## ⚡ System Architecture
+## 🤖 AI Agents
 
-Built for scale and observability, the system strictly separates concerns between the client interface, API orchestration, and background worker processes.
+The core intelligence is distributed across specialized agentic personas:
+
+- **Planner Agent**: Analyzes user prompts and decomposes them into executable deterministic steps.
+- **Research Agent**: Scours the web (DuckDuckGo) and local vector stores for highly relevant citations and contextual grounding.
+- **Document Agent**: Parses uploaded PDFs and uses OCR on images, segmenting text into dense knowledge chunks.
+- **Synthesis Agent**: Merges instructions, templates, and raw data into heavily structured, citation-aware JSON responses.
+- **Compiler Agent**: Intercepts LLM outputs and securely bridges them into a LaTeX engine for rendering.
+
+---
+
+## 🧠 Multi-Agent Workflow
 
 ```mermaid
-graph LR
-    classDef frontend fill:#0f172a,stroke:#334155,stroke-width:2px,color:#fff
-    classDef backend fill:#1e1b4b,stroke:#3730a3,stroke-width:2px,color:#fff
-    classDef data fill:#064e3b,stroke:#065f46,stroke-width:2px,color:#fff
-    classDef ai fill:#4c1d95,stroke:#5b21b6,stroke-width:2px,color:#fff
-
-    subgraph Client Layer
-        UI[React + Vite UI]:::frontend
-        MD[Markdown/Mermaid Renderer]:::frontend
-    end
-
-    subgraph API Layer
-        API[FastAPI Router]:::backend
-        MCP[MCP Interface]:::backend
-    end
-
-    subgraph Intelligence Layer
-        AGENTS[Agentic Core]:::ai
-        GEMINI[Vertex AI / Gemini]:::ai
-    end
-
-    subgraph Data & Tool Layer
-        SQLITE[(SQLite Memory)]:::data
-        DRIVE[(Google Drive)]:::data
-        SEARCH[Search API]:::data
-        LATEX[pdfLaTeX Engine]:::data
-    end
-
-    UI -->|HTTP / REST| API
-    API --> MCP
-    API --> AGENTS
-    AGENTS <--> GEMINI
-    AGENTS <--> SQLITE
-    AGENTS --> SEARCH
-    AGENTS --> LATEX
-    LATEX --> DRIVE
+flowchart TD
+    UserRequest[User Request] --> Planner[Planner Agent]
+    
+    Planner -->|Sub-tasks| Research[Research Agent]
+    Planner -->|Sub-tasks| Parser[Document Agent]
+    
+    Research -->|Web Search| Memory[SQLite Memory Store]
+    Parser -->|PDF / OCR| Memory
+    
+    Memory --> Synthesis[Synthesis Agent]
+    Synthesis -->|Constraint Checking| Gemini[Vertex AI Gemini]
+    
+    Gemini --> StructuredData[Structured JSON Output]
+    StructuredData --> Compiler[LaTeX Compiler Agent]
+    Compiler --> FinalPDF[Publication Ready PDF]
 ```
 
 ---
 
 ## 📄 Research Pipeline
 
-When a user uploads a source document or provides a core thesis, the pipeline activates a strict deterministic workflow to prevent hallucination and format leakage.
-
 ```mermaid
 sequenceDiagram
     participant User
     participant FastAPI
     participant Tools
-    participant LLM
+    participant Gemini
     participant LaTeX
     
-    User->>FastAPI: Uploads PDF / Thesis
-    FastAPI->>Tools: PyPDF Extract / OCR (Tesseract)
-    Tools-->>FastAPI: Raw Text Chunks
-    FastAPI->>LLM: Chunk Analysis & Prompt Chaining
-    LLM-->>FastAPI: Structured Literature Review
-    FastAPI->>Tools: Web Search (DuckDuckGo)
-    Tools-->>FastAPI: External Citations
-    FastAPI->>LLM: Final Synthesis (JSON)
-    LLM-->>FastAPI: IEEE-Compliant JSON Structure
-    FastAPI->>LaTeX: Map JSON to Template (IEEE/APA)
+    User->>FastAPI: Submit Topic & PDFs
+    FastAPI->>Tools: Run PyPDF & Tesseract OCR
+    Tools-->>FastAPI: Raw Knowledge Chunks
+    FastAPI->>Gemini: Semantic Chunk Analysis
+    Gemini-->>FastAPI: Interim Knowledge Graph
+    FastAPI->>Tools: Retrieve Web Citations
+    Tools-->>FastAPI: Reference Data
+    FastAPI->>Gemini: Final Multi-Agent Synthesis
+    Gemini-->>FastAPI: Grounded Academic JSON
+    FastAPI->>LaTeX: Map to IEEE/ACM Template
     LaTeX-->>FastAPI: Compiled PDF Document
-    FastAPI-->>User: Delivery & Drive Link
+    FastAPI-->>User: Streaming Delivery
+```
+
+---
+
+## 📸 PDF Analysis
+
+<p align="center">
+  <img src="docs/screenshots/pdf-analysis.png" width="90%" alt="PDF Analysis Engine"/>
+</p>
+
+---
+
+## 🔍 RAG Architecture
+
+Our advanced Retrieval-Augmented Generation (RAG) architecture ensures zero hallucination by anchoring generation strictly to extracted knowledge.
+
+```mermaid
+flowchart LR
+    Docs[Raw Documents] --> Extractor[PyPDF / OCR]
+    Extractor --> Chunker[Semantic Chunker]
+    Chunker --> Embeddings[Embedding Engine]
+    Embeddings --> VectorDB[SQLite Vector Store]
+    
+    Query[User Query] --> Retriever[Context Retriever]
+    VectorDB --> Retriever
+    Retriever --> Prompt[Augmented Prompt]
+    Prompt --> LLM[Gemini 2.5]
+```
+
+---
+
+## 📚 Citation Intelligence
+
+Citations are heavily managed to avoid JSON schema breakage. External sources and parsed document chunks are dynamically injected into a secondary citation resolution prompt. 
+- Auto-deduplication of references.
+- Dynamic cross-referencing mapping `[1]`, `[2]` into the actual paragraph bodies.
+
+---
+
+## 🏗️ System Architecture
+
+```mermaid
+graph TD
+    Client[React/Vite Frontend] --> API[FastAPI Backend]
+    
+    subgraph Execution Layer
+        API --> Executor[Agent Executor]
+        Executor --> MCP[MCP Server]
+    end
+    
+    subgraph Intelligence Layer
+        Executor --> Gemini[Google Vertex AI]
+    end
+    
+    subgraph Storage & Tools Layer
+        Executor --> DB[(SQLite Memory)]
+        Executor --> Search[DuckDuckGo Tool]
+        Executor --> PDF[LaTeX/PDF Tool]
+        Executor --> Drive[Google Drive API]
+    end
 ```
 
 ---
@@ -172,27 +197,22 @@ sequenceDiagram
 
 ```bash
 autonomous-research-agent/
-├── backend/                     # High-performance FastAPI core
-│   ├── agent/                   # Autonomous reasoning, planner, memory
-│   ├── mcp/                     # Model Context Protocol server logic
-│   ├── paper_templates/         # Raw LaTeX templates (.tex)
-│   ├── routes/                  # REST API endpoints
-│   ├── services/                # Core business logic layer
-│   ├── tools/                   # Extensible agent actions
-│   ├── utils/                   # Configuration and cross-cutting concerns
-│   ├── main.py                  # API entry point
-│   └── pdf_generator.py         # LaTeX compilation engine
-├── frontend/                    # Cinematic React Application
+├── backend/                  # High-performance API and Agent Core
+│   ├── agent/                # Executor, memory, and planner modules
+│   ├── mcp/                  # Model Context Protocol integration
+│   ├── paper_templates/      # Raw .tex templates (IEEE, APA, ACM)
+│   ├── routes/               # FastAPI endpoints
+│   ├── tools/                # Discovery tools (Search, PDF, OCR)
+│   └── pdf_generator.py      # LaTeX Compilation bridge
+├── frontend/                 # Cinematic UI Application
 │   ├── src/
-│   │   ├── components/          # Shadcn UI, Framer Motion, layout
-│   │   ├── hooks/               # Custom React hooks (API, state)
-│   │   ├── pages/               # Dashboard and core views
-│   │   └── lib/                 # Utilities and API clients
-│   └── tailwind.config.ts       # Design system tokens
-├── docs/                        # Architecture and integration guides
-├── start.sh                     # Unified orchestration script
-├── requirements.txt             # Backend dependencies
-└── .env.example                 # Environment configuration
+│   │   ├── components/       # Shadcn UI primitives
+│   │   ├── hooks/            # State and API hooks
+│   │   └── pages/            # Primary Dashboard views
+│   └── tailwind.config.ts    # Design tokens
+├── docs/                     # Assets, screenshots, and architecture
+├── start.sh                  # Application orchestrator
+└── .env.example              # Configuration template
 ```
 
 ---
@@ -200,36 +220,32 @@ autonomous-research-agent/
 ## ⚙️ Quick Start
 
 ### Prerequisites
-- Node.js `v18+`
-- Python `3.10+`
-- LaTeX Distribution (`texlive` / `mactex`)
-- Tesseract OCR engine
+- Node.js 18+
+- Python 3.10+
+- LaTeX (`texlive-full` or MacTeX)
+- Tesseract OCR
 
-### 1. Clone & Configure
+### Installation
+
 ```bash
+# 1. Clone the repository
 git clone https://github.com/virubot/Autonomous-Research-Agent.git
 cd Autonomous-Research-Agent
 
-# Setup Environment
+# 2. Configure Environment
 cp .env.example .env
-```
 
-### 2. Install Dependencies
-```bash
-# Backend Virtual Environment
+# 3. Setup Python Backend
 python -m venv .venv
 source .venv/bin/activate
 pip install -r requirements.txt
 
-# Frontend Setup
+# 4. Setup React Frontend
 cd frontend
 npm install
 cd ..
-```
 
-### 3. Launch the Platform
-```bash
-# Starts both FastAPI (8000) and Vite (5173) concurrently
+# 5. Boot the Platform
 ./start.sh
 ```
 
@@ -237,103 +253,101 @@ cd ..
 
 ## 🔑 Environment Variables
 
-Define these in your `.env` file at the repository root.
-
-| Variable | Description | Required |
-|----------|-------------|:---:|
-| `GOOGLE_CLOUD_PROJECT` | Your GCP project ID for Vertex AI | ✅ |
-| `GOOGLE_CLOUD_LOCATION` | Region for Vertex AI (e.g., `us-central1`) | ✅ |
-| `GOOGLE_APPLICATION_CREDENTIALS`| Absolute path to GCP Service Account JSON | ✅ |
-| `GEMINI_MODEL` | Primary model (default: `gemini-2.5-flash`) | ❌ |
-| `FALLBACK_MODEL` | Fallback model (default: `gemini-2.5-flash-lite`) | ❌ |
-| `MCP_ENABLED` | Toggle the Model Context Protocol server | ❌ |
-| `GOOGLE_DRIVE_FOLDER_ID` | Target folder for uploaded PDFs | ❌ |
+| Variable | Description | Requirement |
+|----------|-------------|-------------|
+| `GOOGLE_CLOUD_PROJECT` | GCP Project ID for Vertex AI | **Required** |
+| `GOOGLE_CLOUD_LOCATION` | Region (e.g., `us-central1`) | **Required** |
+| `GOOGLE_APPLICATION_CREDENTIALS` | Absolute path to Service Account JSON | **Required** |
+| `GEMINI_MODEL` | LLM version (e.g. `gemini-2.5-flash`) | Optional |
+| `MCP_ENABLED` | Enable Model Context Protocol | Optional |
 
 ---
 
 ## 📊 API Documentation
 
-The backend exposes a fully typed OpenAPI specification.
-
 | Endpoint | Method | Description |
 |----------|--------|-------------|
-| `/` | `GET` | System health, environment, and MCP status |
-| `/api/generate` | `POST` | Trigger agentic research and paper generation |
-| `/api/upload` | `POST` | Ingest PDFs or Images for agent context |
-| `/mcp/health` | `GET` | Diagnostic endpoint for the MCP subsystem |
-| `/outputs/{file}` | `GET` | Static file server for generated PDFs |
-
-<details>
-<summary><b>View Example API Request</b></summary>
-
-```json
-POST /api/generate
-{
-  "topic": "The impact of quantum computing on modern cryptography",
-  "template": "ieee",
-  "depth": "comprehensive",
-  "sources": ["upload_12345.pdf"]
-}
-```
-</details>
+| `/` | `GET` | System health check and diagnostic info |
+| `/api/generate` | `POST` | Core execution endpoint for paper generation |
+| `/api/upload` | `POST` | Ingestion pipeline for PDFs and images |
+| `/mcp/health` | `GET` | Diagnostic status of the MCP server |
 
 ---
 
-## 🎨 UI/UX Philosophy
+## 🎨 Frontend/UI
 
-The frontend is engineered to feel like an **Obsidian-intelligence hybrid**.
-- **Dark Mode Native:** Deep blacks (`#09090b`) with subtle borders and neon accents.
-- **Micro-interactions:** Framer Motion powers fluid transitions, state changes, and agent step reveals.
-- **Real-Time Streaming:** SSE (Server-Sent Events) style rendering for markdown and Mermaid diagrams directly in the chat interface.
-- **Accessible & Responsive:** Radix UI primitives ensure complete keyboard navigability and mobile readiness.
+Built for researchers and developers alike, the interface embodies a premium aesthetic:
+- **Shadcn UI & Tailwind CSS**: Pixel-perfect component styling.
+- **Framer Motion**: Micro-interactions bridging user actions with agent states.
+- **Live Markdown**: Streaming SSE support dynamically renders Mermaid charts and rich text.
 
 ---
 
-## 🔒 Security & Compliance
+## 🔒 Security
 
-- **Environment Isolation:** Secrets and keys are strictly managed via `python-dotenv` and isolated from the client.
-- **Execution Boundaries:** LaTeX compilation utilizes secure temporary directories with strict timeout limits to prevent malicious injection or infinite compilation loops.
-- **Robust Error Catching:** Global exception handlers prevent raw stack traces from leaking system architecture to the frontend.
+- **Sandboxed Compilation**: The LaTeX subprocess executes in isolated temporal directories with hard kill limits.
+- **Exception Sanitization**: Global handlers intercept internal tracebacks, preventing AI pipeline logic leakage.
+- **Secure File Ingestion**: File-type constraints and payload size limits on all `upload` endpoints.
 
 ---
 
 ## 🚀 Deployment
 
-### Backend (Docker / Render / Railway)
-The backend is stateless (aside from SQLite, which can be volume-mounted) and easily containerized. Ensure your Docker image includes `texlive-full` and `tesseract-ocr`.
+### Docker (Backend)
+Containerize the FastAPI instance ensuring dependencies for LaTeX and Tesseract are installed via `apt-get`.
+```dockerfile
+RUN apt-get update && apt-get install -y texlive-full tesseract-ocr
+```
 
-### Frontend (Vercel)
-The Vite frontend can be deployed seamlessly to Vercel. Ensure you override the API base URL in your production build to point to your live FastAPI instance.
+### Vercel (Frontend)
+The Vite frontend compiles smoothly into static assets for Vercel. Set your upstream API origin in your Vercel production settings.
 
 ---
 
-## 📈 Performance & Benchmarks
+## 📈 Benchmarks
 
-| Metric | Target | Notes |
-|--------|--------|-------|
-| **Agent Planning Latency** | `< 1.2s` | Powered by Gemini 2.5 Flash |
-| **PDF Extraction Speed** | `~50 pages/sec` | `pypdf` native extraction |
-| **OCR Processing Latency** | `~2-4s / page` | Dependent on Tesseract CPU allocation |
-| **LaTeX Compilation** | `< 3.5s` | Sub-process PDF generation |
+| Operation | Latency | Target Throughput |
+|-----------|---------|-------------------|
+| Agent Orchestration | `~1.2s` | High |
+| Document Extraction | `~4s / doc` | High |
+| Web Scraping | `~2s / query` | Medium |
+| LaTeX PDF Compile | `< 4s` | Sub-process bound |
+
+---
+
+## 🧪 Examples
+
+<details>
+<summary><b>API POST Example</b></summary>
+
+```bash
+curl -X POST http://localhost:8000/api/generate \
+-H "Content-Type: application/json" \
+-d '{
+  "topic": "The integration of multi-agent architectures in academic writing",
+  "template": "ieee",
+  "depth": "comprehensive"
+}'
+```
+</details>
 
 ---
 
 ## 🗺️ Roadmap
 
-- [x] Multi-agent task planning & execution
-- [x] High-fidelity LaTeX pipeline (IEEE, APA, ACM)
-- [x] MCP Server integration
-- [x] Unified SQLite memory store
-- [ ] Direct ArXiv API integration
-- [ ] Knowledge Graph visualization
-- [ ] Enterprise SSO / RBAC authentication
-- [ ] Multi-modal input support (Audio / Video transcripts)
+- [x] Multi-agent orchestration layer
+- [x] RAG with SQLite persistence
+- [x] LaTeX IEEE/APA/ACM generation
+- [x] Model Context Protocol Integration
+- [ ] Direct ArXiv API connections
+- [ ] Enterprise Auth (OAuth 2.0 / RBAC)
+- [ ] Automated Peer-Review Agent persona
 
 ---
 
 ## 🤝 Contributing
 
-We welcome contributions from the community! Whether it's adding new academic templates, optimizing agent prompts, or refining the UI.
+Contributions make the open source community such an amazing place to learn, inspire, and create. Any contributions you make are **greatly appreciated**.
 
 1. Fork the Project
 2. Create your Feature Branch (`git checkout -b feature/AmazingFeature`)
@@ -349,6 +363,6 @@ Distributed under the MIT License. See `LICENSE` for more information.
 
 ---
 
-<div align="center">
-  <p>Built with ⚡ by <a href="https://github.com/virubot">virubot</a></p>
-</div>
+<p align="center">
+  <img src="https://img.shields.io/badge/Made_with-Love-ff69b4?style=for-the-badge" alt="Made with Love"/>
+</p>
