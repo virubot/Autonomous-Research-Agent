@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://images.unsplash.com/photo-1456513080510-7bf3a84b82f8?q=80&w=1200&auto=format&fit=crop" width="100%" alt="Academic Research AI Header" style="border-radius: 8px; border: 1px solid #111;" />
+  <img src="file:///Users/viren/Downloads/ChatGPT%20Image%20May%2013,%202026%20at%2001_40_04%20PM.png" width="100%" alt="Academic Research AI Header" style="border-radius: 8px; border: 1px solid #111;" />
 </p>
 
 <h1 align="center">⚡ Autonomous Research Agent</h1>
