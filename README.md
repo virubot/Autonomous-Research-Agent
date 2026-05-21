@@ -130,17 +130,6 @@ sequenceDiagram
     LaTeX-->>FastAPI: Compiled PDF Document
     FastAPI-->>User: Streaming Delivery
 ```
-
----
-
-## 📸 PDF Analysis
-
-<p align="center">
-  <img src="docs/screenshots/pdf-analysis.png" width="90%" alt="PDF Analysis Engine"/>
-</p>
-
----
-
 ## 🔍 RAG Architecture
 
 Our advanced Retrieval-Augmented Generation (RAG) architecture ensures zero hallucination by anchoring generation strictly to extracted knowledge.
