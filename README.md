@@ -1,11 +1,11 @@
 <p align="center">
-  <img src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=1200&auto=format&fit=crop" width="100%" alt="Autonomous Research Agent Banner" style="border-radius: 8px; border: 1px solid #222;" />
+  <img src="https://images.unsplash.com/photo-1456513080510-7bf3a84b82f8?q=80&w=1200&auto=format&fit=crop" width="100%" alt="Academic Research AI Header" style="border-radius: 8px; border: 1px solid #111;" />
 </p>
 
-<h1 align="center">⚡ AUTONOMOUS RESEARCH AGENT</h1>
+<h1 align="center">⚡ Autonomous Research Agent</h1>
 
 <p align="center">
-  <b>A state-of-the-art, production-ready multi-agent system powered by Gemini 2.5 and Model Context Protocol (MCP) to automate the academic research lifecycle—from literature gathering to publication-quality LaTeX compiling.</b>
+  <b>A state-of-the-art academic engine powered by Google Vertex AI (Gemini 2.5) and Model Context Protocol (MCP) designed to autonomously research, cite, format, and compile publication-ready IEEE, ACM, and APA research papers from prompts or PDF/image sources.</b>
 </p>
 
 <p align="center">
@@ -18,282 +18,253 @@
 <p align="center">
   <a href="#-overview">Overview</a> •
   <a href="#-features">Features</a> •
-  <a href="#-system-architecture">Architecture</a> •
-  <a href="#-multi-agent-workflow">Agent Loop</a> •
-  <a href="#-research--pdf-pipeline">LaTeX Pipeline</a> •
-  <a href="#-project-structure">Project Directory</a> •
-  <a href="#-quick-start">Quick Start</a> •
-  <a href="#-api-documentation">API Docs</a> •
-  <a href="#-security">Security</a>
+  <a href="#-ai-agents">AI Agents</a> •
+  <a href="#-rag-pipeline">RAG Pipeline</a> •
+  <a href="#-research-workflow">Research Workflow</a> •
+  <a href="#-pdf-processing">PDF Processing</a> •
+  <a href="#-citation-engine">Citation Engine</a> •
+  <a href="#-architecture">Architecture</a> •
+  <a href="#-project-structure">Structure</a> •
+  <a href="#-installation">Installation</a> •
+  <a href="#-api-documentation">API Docs</a>
 </p>
 
 ---
 
 ## 🚀 Overview
 
-The **Autonomous Research Agent** is a professional-grade research engineering platform designed to automate literature search, document analysis, and formatted writing. The platform converts complex technical topics or raw uploaded source files into comprehensive, submission-ready academic papers compliant with major academic classes: **IEEEtran**, **acmart (ACM)**, and **apa7**.
+The **Autonomous Research Agent** is an advanced engineering platform built to democratize academic writing and technical research generation. By integrating deep semantic discovery, multi-agent orchestration, and native LaTeX compilation pipelines, it translates unstructured human prompts or raw document uploads into authoritative, mathematically rigorous, and fully cited academic manuscripts.
 
-### The Core Problem Solved
-Traditional AI research workflows are fragmented, requiring manual web searches, manual citation formatting, copy-pasting into text processors, and fighting LaTeX compile environments. The Autonomous Research Agent resolves this by linking:
-- **Intelligent Planning:** The `AgentPlanner` decomposes requests into goal-directed workflows.
-- **Dynamic Tool Dispatching:** The agent executes complex tools in both native execution pathways and Model Context Protocol (MCP) server configurations.
-- **Rigorous Data Consolidation:** A unified SQLite-backed memory store maintains telemetry, event flows, and literature traces.
-- **High-Fidelity Document Generation:** A secure Jinja2-to-LaTeX compiler automatically handles formatting, table generation, equations, citation injection, and multi-pass compilation.
+### Why it exists
+Academic writing requires an immense cognitive load, not just for content drafting, but for managing reference libraries, adhering to strict layout constraints (e.g. two-column IEEE formats), and cross-referencing equations. This platform automates the tedious structure compilation, citation tagging, and typesetting processes, allowing researchers to focus entirely on methodology and analysis.
+
+### Core Innovations
+- **Self-Directed Research Logic:** Breaks down complex, open-ended technical goals into distinct execution phases (planning, gathering, synthesizing, typesetting).
+- **Double-Pass LaTeX Compilation:** Generates actual Jinja2-rendered LaTeX source files and compiles them using a robust double-pass compiler to resolve citation cross-references and margins natively.
+- **Model Context Protocol (MCP) Co-Processing:** Operates an active MCP server allowing the AI to dynamically call sandboxed tools for search, OCR, extraction, and cloud hosting.
 
 ---
 
 ## ✨ Features
 
-| Feature Class | Capabilities | Realized Technologies |
-| :--- | :--- | :--- |
-| **🤖 Autonomous Agent Core** | • Dynamic planning & execution traces<br>• strict JSON-schema compliance<br>• Fail-soft retry policies & fallback capabilities | `AgentPlanner`, `AgentExecutor`, Gemini 2.5 Flash / Lite |
-| **🔌 Model Context Protocol** | • Extensible MCP server architecture<br>• Dynamic runtime tool registry & discovery<br>• Standardized JSON-RPC tool transport | `MCPServer`, `backend/mcp/dispatcher.py` |
-| **📚 Document Processing & OCR** | • Raw text extraction from multipage PDFs<br>• Tesseract OCR parsing of uploaded visual graphics<br>• Automatic text normalization and file ingestion | `pypdf`, `pytesseract`, `Pillow` |
-| **🔬 Publication-Grade LaTeX Engine** | • Automatic Jinja2-to-LaTeX template rendering<br>• Double-pass compilation to resolve cross-references<br>• Native template styles: IEEEtran, ACM art, APA7 | `pdf_generator.py`, `latex_utils.py`, `pdflatex` |
-| **💾 Persistent Observation Store** | • Consolidated database for execution traces<br>• Document registry tracking source snippets & logs<br>• Full task run history hydration | SQLite (`agent_memory.db`, `agent_events.db`) |
-| **🎨 obsidian-Intelligence Dashboard** | • Real-time markdown rendering & code blocks<br>• Interactive Server-Sent Event (SSE) progress streams<br>• Live Mermaid diagram visualization | React 18, Vite, Shadcn UI, Framer Motion, Mermaid.js |
+- **Multi-Agent Orchestration:** Structured co-processing between the high-level `AgentPlanner` and the low-level `AgentExecutor` ensures target alignment.
+- **Academic Standard Compliance:** Out-of-the-box support for compiling visually authentic research manuscripts utilizing official templates: **IEEEtran**, **acmart (ACM)**, and **apa7**.
+- **Context-Aware RAG:** Synthesizes literature findings with inline citations (`[S1]`, `[S2]`) dynamically mapped to a structured bibliography block.
+- **Advanced Optical Character Recognition:** Robust text extraction from uploads of visual charts, graphs, or document pages using Tesseract OCR and Pillow.
+- **Persistent SQLite Telemetry Store:** Unified database schema persistently retaining system trace events, OCR results, and complete historical outputs.
+- **Obsidian-Inspired Dashboard:** Minimalist, high-performance web dashboard featuring real-time Markdown rendering, execution step telemetry, and interactive Mermaid graphs.
 
 ---
 
-## 🧠 System Architecture
+## 🤖 AI Agents
 
-The framework consists of a React client, a multi-threaded FastAPI REST engine, a custom Model Context Protocol dispatcher, and a dedicated LaTeX compiler environment.
+The platform splits execution boundaries between a tactical planning agent and a runtime execution engine to manage state across long-running research loops.
 
+### Agent Planner (`backend/agent/planner.py`)
+Analyzes the user's high-level research prompt and dynamically generates a JSON-structured workflow containing specific steps, tools, and execution plans.
+
+### Agent Executor (`backend/agent/executor.py`)
+Maintains session state, invokes native or Model Context Protocol tools, aggregates search groundings, and passes the parsed context to the Vertex AI Gemini models for paper synthesis.
+
+### Multi-Agent Work Flow
 ```mermaid
-graph TD
-    %% Styling
-    classDef frontend fill:#3b82f6,stroke:#1d4ed8,stroke-width:2px,color:#fff;
-    classDef backend fill:#10b981,stroke:#047857,stroke-width:2px,color:#fff;
-    classDef database fill:#f59e0b,stroke:#d97706,stroke-width:2px,color:#fff;
-    classDef engine fill:#8b5cf6,stroke:#6d28d9,stroke-width:2px,color:#fff;
-    classDef external fill:#ef4444,stroke:#b91c1c,stroke-width:2px,color:#fff;
-
-    %% Elements
-    UI[React Web UI]:::frontend
-    API[FastAPI Endpoint Router]:::backend
-    Exec[Agent Executor Engine]:::engine
-    Plan[Agent Planner Component]:::engine
-    MCP[MCP Server Dispatcher]:::backend
-    DB[(Unified SQLite Memory)]:::database
-    Gen[LaTeX Jinja2 PDF Generator]:::engine
-    
-    %% Toolset
-    Search[DuckDuckGo Search Tool]:::external
-    PDF[PyPDF Extraction Tool]:::engine
-    OCR[Tesseract OCR Engine]:::engine
-    Drive[Google Drive Export Tool]:::external
-    LaTeX[pdflatex Shell Engine]:::external
-
-    %% Connections
-    UI -- "Server-Sent Events / POST" --> API
-    API --> Exec
-    Exec --> Plan
-    Plan -- "Dynamic Target Plans" --> Exec
-    Exec -- "Tool Invocations (direct/mcp)" --> MCP
-    MCP --> Search
-    MCP --> PDF
-    MCP --> OCR
-    Exec -- "Persist History & Events" --> DB
-    Exec -- "Synthesize Paper JSON" --> Gen
-    Gen --> LaTeX
-    Exec -- "Export PDF / Markdown" --> Drive
-    Gen -- "Compiled Artifact (.pdf)" --> UI
+flowchart TD
+    UserQuery[User Research Query] --> Planner[Agent Planner]
+    Planner --> Exec[Agent Executor]
+    Exec --> WebSearch[Web Search Tool]
+    Exec --> DocExtract[Document Extractor]
+    Exec --> SQLiteMem[SQLite Memory Store]
+    Exec --> Synthesis[Synthesis Engine]
+    Synthesis --> LaTeX[LaTeX Formatter]
 ```
 
 ---
 
-## 🤖 Multi-Agent Workflow
+## 🧠 RAG Pipeline
 
-Every research cycle undergoes a strict planning, ingestion, tool execution, and synthesis pipeline coordinated by the `AgentExecutor`.
-
-```mermaid
-sequenceDiagram
-    autonumber
-    actor User as User Dashboard
-    participant API as FastAPI Router
-    participant Exec as Agent Executor
-    participant Plan as Agent Planner
-    participant Tools as MCP Tools Registry
-    participant DB as SQLite DB
-    participant LLM as Vertex AI Client
-
-    User->>API: POST /generate (Prompt, Format, Config)
-    API->>Exec: executor.run()
-    Exec->>LLM: Fetch raw OCR context (if file uploaded)
-    Exec->>Plan: planner.plan(prompt, ocr_context)
-    Plan->>LLM: Generate multi-step JSON execution path
-    LLM-->>Plan: Execution Plan JSON (workflow steps)
-    Plan-->>Exec: Decomposed Plan
-    
-    loop For each Step in workflow
-        Exec->>Tools: Invoke Tool (e.g. web_search, extract_pdf)
-        Tools-->>Exec: Return structured output trace
-        Exec->>DB: Save tool execution event log
-    end
-
-    Exec->>LLM: Synthesize paper content based on sources
-    LLM-->>Exec: Return strict JSON paper payload
-    Exec->>DB: Save unified run telemetry (save_run)
-    Exec-->>API: Stream completed paper structure
-    API-->>User: Render document & trigger LaTeX compile pipeline
-```
-
----
-
-## 📄 Research & PDF Pipeline
-
-Converting unstructured raw search findings or source text into standard academic documents requires a highly defensive parsing, citation normalization, and template formatting process.
+The Retrieval-Augmented Generation pipeline dynamically links real-time research findings to the synthesis prompt to eliminate hallucinations and preserve authoritative data.
 
 ```mermaid
 flowchart TD
-    classDef step fill:#1e293b,stroke:#475569,stroke-width:2px,color:#f8fafc;
-    classDef process fill:#0f172a,stroke:#3b82f6,stroke-width:2px,color:#3b82f6;
-    classDef output fill:#1e1b4b,stroke:#6366f1,stroke-width:2px,color:#a5b4fc;
-
-    A[Unstructured Data / Web Search Snippets]:::step --> B[deduplicate_sources Heuristic]:::process
-    B --> C[assign_ref_ids [S1], [S2]...]:::process
-    
-    D[Raw Section Paragraph Data]:::step --> E[clean_content Paragraph Filter]:::process
-    E -->|Strip section numbers & empty blocks| F[normalize_paper_data Validation]:::process
-    
-    C --> F
-    F --> G[build_bibliography_block Python-side]:::process
-    G -->|Ensures no raw JSON leaks| H[Jinja2 LaTeX Source Rendering]:::process
-    
-    H --> I[compile_latex_to_pdf pdflatex Engine]:::process
-    I -->|Run Pass 1: generate aux files| J[pdflatex Compile Pass 2]:::process
-    J -->|Resolves cross references & labels| K[Final IEEE / ACM / APA PDF]:::output
+    TopicInput[Research Topic] --> SearchQuery[Targeted Search Queries]
+    SearchQuery --> WebDocs[DuckDuckGo Search Results]
+    WebDocs --> ChunkFilter[Snippet Chunking & Deduplication]
+    ChunkFilter --> MemoryInsert[SQLite Context Staging]
+    MemoryInsert --> ContextMerge[Combined Grounding Prompt]
+    ContextMerge --> LLMSynth[Gemini Synthesis Engine]
 ```
 
-### Key Technical Implementations
-1. **Defensive Formatting Validation:** The backend uses `pdf_generator.py` to filter out any generic placeholder text, empty paragraphs, and redundant numbering patterns automatically.
-2. **Strict Bibliography Isolation:** To prevent JSON characters from leaking into raw LaTeX code, the bibliography is composed directly in Python utilizing `_build_bibliography_block` before injecting the escaped string block into the template source.
-3. **Escaping Injection Hazards:** Every textual citation snippet is passed through `latex_escape` to safely escape `&`, `%`, `_`, `{`, `}`, and `$` signs, preserving raw math blocks safely enclosed within `\\( ... \\)`.
+- **Parallel Context Gathering:** Dynamically spins up multi-threaded query execution using DuckDuckGo APIs to crawl real-world documentation and arXiv/IEEE/ACM portals.
+- **Deduplication and Ranking Heuristics:** Filters search snippets based on relevance scores and lexical overlap, ensuring only the most authoritative references ground the generation.
+- **SQLite Context Hydration:** Temporarily caches all retrieved citation fragments into structured SQLite models to build a clean prompt grounding payload.
+
+---
+
+## 🔬 Research Workflow
+
+The entire research generation lifecycle transitions through standard phases, guaranteeing high technical accuracy and structural visual quality.
+
+```mermaid
+flowchart LR
+    Prompt[User Prompt] --> PlanStep[Workflow Planning]
+    PlanStep --> EvidenceStep[Evidence Gathering]
+    EvidenceStep --> SynthesisStep[Content Drafting]
+    SynthesisStep --> FormatStep[LaTeX Template Rendering]
+    FormatStep --> CompileStep[Double Pass pdflatex]
+    CompileStep --> DeliveryStep[PDF Download & Drive Upload]
+```
+
+1. **Planning Phase:** The user's query is analyzed, determining the desired format (IEEE/ACM/APA), mathematical depth, page target, and required tools.
+2. **Evidence Acquisition:** Search scripts and document extractors run concurrently to harvest facts, APIs, parameters, and relevant math frameworks.
+3. **Drafting Phase:** The AI engine drafts multi-paragraph chapters mapping directly to standard structures (Introduction, Architecture, Methodology, Results, etc.) with technical depth.
+4. **Typesetting & Compiling:** The engine renders the Jinja2 LaTeX source, formats the equations, and compiles the document into an authentic PDF output.
+
+---
+
+## 📄 PDF Processing
+
+Handles multi-page document parsing and image analysis to ingest pre-existing papers, diagrams, and system graphics directly into the agent's reference pool.
+
+```mermaid
+flowchart TD
+    Upload[Raw PDF Upload] --> FileParser[PyPDF Extraction]
+    FileParser --> OCRProc[Tesseract OCR Pipeline]
+    OCRProc --> TextCleaning[Text Normalization]
+    TextCleaning --> SQLiteSave[SQLite Upload Registry]
+    SQLiteSave --> ContextGen[Structured OCR Context]
+```
+
+- **File Layout Extraction:** Utilizes `PyPDF` to scrape raw textual files, separating individual pages and registering character lengths.
+- **Visual OCR Pipeline:** Automatically forwards uploaded images (`.png`, `.jpeg`, `.tiff`) to `pytesseract` to extract embedded charts, table parameters, and architectural graphics.
+- **Staging Database Registry:** Formats all successfully processed text chunks and stores them in the `uploaded_files` table, making them instantly queryable by the agent loop.
+
+---
+
+## 🔏 Citation Engine
+
+Validating claims with formal academic citations is critical. The platform features an isolated citation matching and bibliography compilation system.
+
+```mermaid
+flowchart LR
+    Sources[Raw Sources] --> AssignID[Assign Reference IDs]
+    AssignID --> TextMatch[Inline Citation Tagging]
+    TextMatch --> BibGen[Python Bibliography Builder]
+    BibGen --> LaTeXEsc[LaTeX Character Escaping]
+    LaTeXEsc --> BibTeX[LaTeX Bibliography Block]
+```
+
+- **Inline Annotation Tagging:** Maps search and document sources to deterministic reference tags like `[S1]`, `[S2]`, etc., and tags them inline during content drafting.
+- **Python Bibliography Assembler:** Dynamically constructs LaTeX `\begin{thebibliography}` blocks entirely within Python memory to prevent JSON structure leakage into the LaTeX files.
+- **XSS and LaTeX Injection Defenses:** Passes all textual citation segments through regex engines to escape illegal typesetting characters (e.g. `&`, `%`, `_`, `{`, `}`) while preserving valid LaTeX math notation.
+
+---
+
+## 🏗️ System Architecture
+
+The overall system balances asynchronous network boundaries, native CLI tool wrappers, and structured storage targets.
+
+```mermaid
+flowchart TD
+    UI[React Web UI] --> API[FastAPI REST API]
+    API --> Exec[Agent Executor]
+    Exec --> GeminiClient[Vertex AI Gemini Client]
+    Exec --> MCPServer[MCP Server Router]
+    Exec --> DB[(SQLite Database)]
+    Exec --> Generator[Jinja2 LaTeX Generator]
+    Generator --> LaTeXCompiler[pdflatex Engine]
+    LaTeXCompiler --> OutputPDF[Generated Research PDF]
+```
 
 ---
 
 ## 📂 Project Structure
 
 ```bash
-/Users/viren/Documents/Code/Research agent/
-├── backend/                   # FastAPI Server Engine
-│   ├── agent/                 # Core Autonomous Execution Logic
-│   │   ├── executor.py        # System coordinator, orchestrates tool states & generation
-│   │   ├── planner.py         # Plan synthesizer utilizing Vertex AI JSON generation
-│   │   └── memory.py          # SQLite database wrapper for execution persistence
-│   ├── mcp/                   # Model Context Protocol Server Implementation
-│   │   ├── dispatcher.py      # MCP action routing layer
-│   │   ├── models.py          # Strict Pydantic interface structures
-│   │   ├── registry.py        # Tool registration and validation engine
-│   │   └── server.py          # Server transport and setup hooks
-│   ├── routes/                # FastAPI Endpoints
-│   │   ├── generate.py        # Stream and standard post executors
-│   │   └── upload.py          # OCR & PDF parsing routers
-│   ├── templates/             # Academic document classes
-│   │   └── latex/             # Jinja2 templates (ieee.tex.j2, apa.tex.j2, acm.tex.j2)
-│   ├── tools/                 # Execution Tools Interface
-│   │   ├── search.py          # Web crawling and search integration
-│   │   ├── pdf.py             # PyPDF text extraction
-│   │   ├── image.py           # PyTesseract OCR extraction
-│   │   └── drive.py           # Google Drive OAuth / Service Account uploader
-│   ├── utils/                 # General-purpose utility packages
-│   │   ├── gemini.py          # Vertex AI Client for Gemini 2.5 Flash / Lite
-│   │   ├── latex_utils.py     # Escape routines for LaTeX compilations
-│   │   ├── reference_utils.py # Bibliography clean & normalize functions
-│   │   └── config.py          # Unified pydantic settings provider
-│   └── main.py                # Server entry point, exception handlers, MCP registers
-│
-├── frontend/                  # React Vite Application
-│   ├── src/
-│   │   ├── components/        # UI Modular Elements
-│   │   │   ├── PaperGenerator.tsx   # Paper controls, template selectors & page length
-│   │   │   ├── ChatSidebar.tsx      # Sidebar displaying persistence run history
-│   │   │   ├── ChatMessage.tsx      # Message block displaying Markdown, tables, & Mermaid
-│   │   │   └── MermaidRenderer.jsx  # Dynamic Mermaid parser & graph container
-│   │   ├── pages/             # Layout Containers (e.g. Index.tsx)
-│   │   ├── hooks/             # Reactive Custom Hooks
-│   │   ├── lib/               # Utility functions (e.g. API client endpoints)
-│   │   ├── index.css          # Styling declarations
-│   │   └── main.tsx           # Application entry points
-│   └── package.json           # Frontend dependency declarations
-│
-├── start.sh                   # Concurrent multi-service startup script
-├── requirements.txt           # Python application packages
-└── .env.example               # Environmental configuration template
+backend/                       # FastAPI Backend Application
+ ├── agent/                    # Autonomous Planning & Executor
+ │    ├── executor.py          # State orchestrator, runs loops, invokes tools
+ │    ├── planner.py           # Goal analyzer & step flow scheduler
+ │    └── memory.py            # SQLite memory database interface
+ ├── mcp/                      # Model Context Protocol Implementation
+ │    ├── dispatcher.py        # Tool calling and dispatcher router
+ │    ├── registry.py          # Tool signature registration
+ │    └── server.py            # Standard MCP Server Transport
+ ├── routes/                   # API Routers & Controllers
+ │    ├── generate.py          # Post controllers & SSE stream generator
+ │    └── upload.py            # Multipage PDF and Image upload handler
+ ├── templates/                # Jinja2 Layout Templates
+ │    └── latex/               # LaTeX templates (ieee.tex.j2, acm.tex.j2, apa.tex.j2)
+ ├── tools/                    # Core Executable Tools
+ │    ├── search.py            # DuckDuckGo search API wrapper
+ │    ├── pdf.py               # PyPDF text extraction package
+ │    ├── image.py             # PyTesseract visual OCR parsing
+ │    └── drive.py             # Google Drive API upload integration
+ ├── utils/                    # Shared Helper Modules
+ │    ├── gemini.py            # Vertex AI Gemini Client Wrapper
+ │    ├── latex_utils.py       # LaTeX characters escaper
+ │    ├── reference_utils.py   # Bibliography formatter
+ │    └── config.py            # Typed environment settings provider
+ └── main.py                   # Application entry, middleware, & routes registry
 ```
 
 ---
 
-## ⚙️ Quick Start
+## ⚙️ Installation
 
-Follow these steps to configure your environment and run the services locally.
-
-### Prerequisites
-
-1. **Python 3.10+** and **Node.js v18+** (with npm or Bun)
-2. **Tesseract OCR Engine:**
-   - **macOS:** `brew install tesseract`
-   - **Linux:** `sudo apt-get install tesseract-ocr`
-3. **LaTeX Compiler (`pdflatex`):**
-   - **macOS:** Install MacTeX via `brew install --cask mactex-no-gui` or [MacTeX Installer](https://tug.org/mactex/)
-   - **Linux:** `sudo apt-get install texlive-latex-base texlive-latex-extra`
+### System Prerequisites
+Ensure the following binaries are installed and accessible on your path:
+1. **LaTeX Compiler:** `pdflatex` (Install [TeX Live](https://tug.org/texlive/) or [MacTeX](https://tug.org/mactex/)).
+2. **OCR Engine:** Tesseract (Install via `brew install tesseract` on macOS, or `apt install tesseract-ocr` on Debian).
 
 ---
 
 ### Step-by-Step Installation
 
-#### 1. Clone & Set Environment
+#### 1. Clone & Configure Environment Variables
 ```bash
 git clone https://github.com/virubot/Autonomous-Research-Agent.git
 cd Autonomous-Research-Agent
 cp .env.example .env
 ```
-Update your `.env` with your **Google Cloud Project ID** and API constraints.
 
-#### 2. Verify System LaTeX binaries
-The pipeline dynamically detects LaTeX in common paths. On macOS, ensure MacTeX is added to your local path:
-```bash
-export PATH="/Library/TeX/texbin:$PATH"
-```
-
-#### 3. Run with the Unified Startup Script
-The project includes a robust `start.sh` script that automatically loads environmental settings, configures library paths for macOS, activates the Python virtual environment (`.venv`), validates Vertex AI, and starts both backend and frontend servers:
+#### 2. Run the Unified Startup Script
+The project includes a robust startup script (`start.sh`) that automatically manages virtual environment creation, loads environmental settings, registers Homebrew paths for macOS dependencies, validates Vertex AI credentials, and starts both backend and frontend servers:
 
 ```bash
 chmod +x start.sh
 ./start.sh
 ```
 
+- **Frontend Interface:** `http://localhost:5173`
+- **FastAPI Backend Swagger Docs:** `http://localhost:8000/docs`
+
 ---
 
 ## 🔑 Environment Variables
 
-The system centralizes configuration in a typed Pydantic structure loaded from the `.env` file.
+The system relies on the following configurations loaded securely via Pydantic:
 
-| Environment Variable | Type | Default Value | Description |
+| Variable Name | Type | Default Value | Description |
 | :--- | :--- | :--- | :--- |
 | `GOOGLE_CLOUD_PROJECT` | `str` | *Required* | Google Cloud Project ID for Vertex AI access. |
-| `GOOGLE_CLOUD_LOCATION` | `str` | `us-central1` | Region deployment for Vertex Vertex AI API endpoints. |
-| `GEMINI_MODEL` | `str` | `gemini-2.5-flash` | Primary LLM model utilized for planner, synthesis, and JSON generation. |
-| `FALLBACK_MODEL` | `str` | `gemini-2.5-flash-lite` | Secondary fallback model when rate limits or quotas are hit. |
-| `GEMINI_TIMEOUT_SECONDS` | `int` | `120` | Maximum network timeout constraints for Vertex API calls. |
-| `GEMINI_MAX_RETRIES` | `int` | `3` | Maximum retry limit for temporary generation bottlenecks. |
-| `MCP_ENABLED` | `bool` | `true` | Activates Model Context Protocol capabilities. |
-| `GOOGLE_APPLICATION_CREDENTIALS` | `path` | *Optional* | Path to GCP Service Account JSON key file. |
-| `GOOGLE_DRIVE_SERVICE_ACCOUNT_JSON`| `path` | *Optional* | Path to dedicated service account credentials for Google Drive. |
-| `GOOGLE_DRIVE_FOLDER_ID` | `str` | *Optional* | Target folder directory hash for Drive exports. |
+| `GOOGLE_CLOUD_LOCATION` | `str` | `us-central1` | GCP region location for Gemini API calls. |
+| `GEMINI_MODEL` | `str` | `gemini-2.5-flash` | Primary Gemini model utilized for planning & writing. |
+| `FALLBACK_MODEL` | `str` | `gemini-2.5-flash-lite` | Fallback model if primary exceeds quota. |
+| `GEMINI_TIMEOUT_SECONDS` | `int` | `120` | Network request timeout threshold. |
+| `MCP_ENABLED` | `bool` | `true` | Enables Model Context Protocol runtime tools. |
+| `GOOGLE_DRIVE_FOLDER_ID` | `str` | *Optional* | Destination directory ID for Drive exporting. |
 
 ---
 
 ## 📊 API Documentation
 
-### 1. Unified Generation API
-* **Endpoint:** `POST /generate`
-* **Content-Type:** `application/json`
-* **Payload Structure:**
+### 1. Execute Generation
+- **Endpoint:** `POST /generate`
+- **Headers:** `Content-Type: application/json`
+- **Payload:**
 ```json
 {
-  "prompt": "Designing an Autonomous Agent for Distributed Database Rebalancing",
+  "prompt": "Investigating Quantum Key Distribution Protocols in Mesh Networks",
   "output_type": "research_paper",
   "format_type": "ieee",
   "page_length": "4-5",
@@ -303,34 +274,33 @@ The system centralizes configuration in a typed Pydantic structure loaded from t
   "include_diagrams": true
 }
 ```
-* **Success Response (200 OK):**
+- **Response Structure (200 OK):**
 ```json
 {
-  "title": "A Multi-Agent System for Autonomous Distributed Database Rebalancing",
+  "title": "Quantum Key Distribution Protocols in High-Density Mesh Networks",
   "authors": ["Autonomous Research Assistant"],
   "affiliation": "Autonomous Research Assistant Platform",
-  "abstract": "This study proposes an automated control plane...",
-  "pdf_path": "generated_outputs/research_paper_a8b2c9d1.pdf",
-  "drive_link": null,
+  "abstract": "This study analyzes the deployment limits...",
+  "pdf_path": "generated_outputs/research_paper_6e4c7d8a.pdf",
   "references": [
-    { "text": "J. Doe et al., Distributed Database Principles, 2024." }
+    { "text": "H. Bennett et al., Quantum Cryptography, IEEE International Conference, 1984." }
   ]
 }
 ```
 
 ---
 
-### 2. Streaming Progress Execution
-* **Endpoint:** `GET /generate/stream`
-* **Query Parameters:** `prompt` (string), `output_type` (string), `format_type` (string)
-* **Response Type:** `text/event-stream`
-* **Event Streams:**
+### 2. Stream Generation Progress (Server-Sent Events)
+- **Endpoint:** `GET /generate/stream`
+- **Parameters:** `prompt` (string), `output_type` (string), `format_type` (string)
+- **Response Protocol:** `text/event-stream`
+- **Event Outputs:**
 ```http
 event: planning
 data: {"message": "Building execution plan"}
 
 event: searching
-data: {"message": "Search fresh web sources for grounding", "tool": "web_search"}
+data: {"message": "Searching fresh web sources", "tool": "web_search"}
 
 event: generating
 data: {"message": "Generating final output"}
@@ -341,71 +311,77 @@ data: { ... final JSON response ... }
 
 ---
 
-### 3. File Context Ingestion
-* **Endpoint:** `POST /upload`
-* **Content-Type:** `multipart/form-data`
-* **Parameters:**
+### 3. File OCR and Context Ingestion
+- **Endpoint:** `POST /upload`
+- **Headers:** `Content-Type: multipart/form-data`
+- **Payload:**
   - `file`: Raw Binary File (PDF or Image)
-  - `prompt`: Specific prompt context (optional)
-  - `output_type`: Target format (optional)
-* **Success Response (200 OK):**
+  - `prompt`: Instructions on file context
+- **Response Structure (200 OK):**
 ```json
 {
   "status": "completed",
-  "output": "Extracted and synthesized results...",
   "uploaded_file": {
-    "id": 12,
-    "filename": "database_design.pdf",
-    "file_type": "pdf",
-    "extracted_characters": 8450
+    "id": 15,
+    "filename": "quantum_layer.png",
+    "file_type": "image",
+    "extracted_characters": 1560
   }
 }
 ```
 
 ---
 
-## 🎨 UI/UX Design Philosophy
+## 🎨 UI/UX Design System
 
-The user interface is modeled on the **Obsidian Intelligence** design system—a minimal, dark, glassmorphic workspace tailored for technical research:
-- **Reactive Workflow Canvas:** Displays structured state logs, real-time agent thoughts, and tools currently executing.
-- **Dynamic Mermaid Visualizer:** Automatically translates structural agent descriptions into rendered graphs directly in your chat stream.
-- **Sidebar History Context:** Retains search queries, file reference registries, and Google Drive links in a persistable SQLite database list.
-
-<p align="center">
-  <img src="https://images.unsplash.com/photo-1555066931-4365d14bab8c?q=80&w=1200&auto=format&fit=crop" width="100%" alt="Obsidian Workspace Screenshot" style="border-radius: 8px; border: 1px solid #222;" />
-</p>
+The system operates on an Obsidian-inspired layout system built on top of **Tailwind CSS** and **Shadcn UI**:
+- **Glassmorphic Control Console:** Custom panel configurations allow researchers to adjust bibliography template schemas, page counts, math targets, and cloud exports.
+- **Dynamic Step Observation Tracks:** An asynchronous activity channel mapping current agent thoughts, tool statuses, and executing sub-processes visually.
+- **Live Markdown Canvas:** Supports real-time text rendering, mathematical formulas via LaTeX fonts, and dynamic Mermaid graphs.
 
 ---
 
-## 🔒 Security & Sandboxing
+## 🔒 Security Sandboxing
 
-The framework adheres to strong operational guidelines to operate safely on server instances:
-1. **Strict Input Escaping:** Dynamic text strings undergo sanitization by `latex_escape` to block raw LaTeX macros from breaking compile execution paths or executing shell-escaped payloads.
-2. **Defensive Shell Constraints:** The PDF generation engine calls `pdflatex` using the `-halt-on-error` and `-interaction=nonstopmode` limits alongside structured command timeouts to prevent endless processing cycles.
-3. **Database Parameterization:** Telemetry logging utilizes strictly parameterized SQLite connections in `MemoryStore` to make SQL Injection vectors impossible.
+- **No Shell Execution Escapes:** The Jinja2 templates are strictly sandboxed. The backend compiles the generated files with shell escapes disabled (`-no-shell-escape` equivalents) to prevent unsafe script execution within local directories.
+- **Execution Resource Guards:** Set to abort PDF processing if compiling exceeds `90` seconds, eliminating potential CPU starvation hazards or endless compilation loops.
+- **Secure File Sanitization:** All user-uploaded filenames are aggressively stripped of arbitrary path symbols via `_safe_filename` regex logic before being saved.
 
 ---
 
-## 📈 Performance & Latency Metrics
+## 📈 Latency Benchmarks
 
-Optimized for instant responsive actions and lower operating resource impact:
+Optimized parallel processes yield rapid synthesis timelines compared to manual human research methods:
 
 ```
-[Agent planning step]     ──> ~ 1.2s  (Vertex AI JSON Generation)
-[Web searching & scraping]  ──> ~ 2.0s  (Parallelized DuckDuckGo Fetching)
-[Text Extraction & OCR]    ──> ~ 1.5s  (OCR Parsing & File Staging)
-[Synthesis and Compilation] ──> ~ 3.5s  (Jinja2 + pdflatex Compilation Cycles)
-──────────────────────────────────────────────────────────────────────────
-Average End-to-End Latency:  ~ 8.2s
+[Phase 1: Workflow Planning] ────> 1.1s
+[Phase 2: Source Harvesting] ────> 1.8s
+[Phase 3: Image OCR & Parse] ────> 1.4s
+[Phase 4: Synthesis & Draft] ────> 3.2s
+[Phase 5: double pdflatex]   ────> 2.8s
+────────────────────────────────────────────────────
+Average Total Generation:  10.3s
 ```
+
+---
+
+## 🧪 Real-World Prompt Examples
+
+Here is an example prompt that generates high-fidelity output:
+
+```
+Design an autonomous distributed control plane for edge microgrids using actor-critic reinforcement learning. Outline the communication topology, define the MDP state-action space, and include mathematical formulations for the actor-critic update parameters.
+```
+
+The system automatically detects the math-intensive nature, generates the appropriate LaTeX equations, constructs a performance comparison table under the "Experimental Setup" chapter, formats it in a two-column IEEEtran template, and compiles it into a beautiful PDF.
 
 ---
 
 ## 🗺️ Engineering Roadmap
 
-- [ ] **Autonomous Citation Cross-Matching:** Cross-referencing synthesized claims against ArXiv and Semantic Scholar APIs to download verified BibTeX keys dynamically.
-- [ ] **Multi-Agent Consensus Verification:** Adding a secondary critic loop evaluating draft chapters for technical accuracy, formatting requirements, and structural depth.
-- [ ] **PGVector Vector Store Integration:** Transitioning from file text chunks to localized vector embeddings for enhanced document context search.
+- [ ] **Dynamic BibTeX Cross-Retrieval:** Dynamic integration with the Semantic Scholar and CrossRef REST APIs to query, fetch, and compile BibTeX entries natively.
+- [ ] **Dual-Agent Writer/Critic Loops:** Introducing a dedicated Reviewer Agent to parse compiled PDF drafts and dynamically recommend bibliography corrections.
+- [ ] **Embedding Vector Storage:** Shifting localized SQLite search caching to vector embedding models (utilizing `pgvector` or local stores) for deep long-term semantic retrieval.
 
 ---
 
@@ -417,6 +393,6 @@ Distributed under the **MIT License**. See `LICENSE` for details.
 
 ## 🙌 Acknowledgements
 
-- [Google Vertex AI API](https://cloud.google.com/vertex-ai) for providing robust Gemini 2.5 Flash endpoints.
-- The [Model Context Protocol (MCP)](https://modelcontextprotocol.io) community for creating standard tools integrations interfaces.
-- The TeX Users Group (TUG) for maintaining the core `pdflatex` compilation engines.
+- **Google Vertex AI** for the low-latency Gemini 2.5 generative APIs.
+- **The TUG (TeX Users Group)** for the persistent work maintaining open-source academic compiling systems.
+- **The MCP Core Team** for facilitating dynamic local tool routing protocols.
