@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="file:///Users/viren/Downloads/ChatGPT%20Image%20May%2013,%202026%20at%2001_40_04%20PM.png" width="100%" alt="Academic Research AI Header" style="border-radius: 8px; border: 1px solid #111;" />
+  <img src="docs/assets/research-banner.png" width="100%" alt="Academic Research AI Header" style="border-radius: 8px; border: 1px solid #111;" />
 </p>
 
 <h1 align="center">⚡ Autonomous Research Agent</h1>
@@ -9,15 +9,19 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/virubot/Autonomous-Research-Agent/actions"><img src="https://img.shields.io/github/actions/workflow/status/virubot/Autonomous-Research-Agent/ci.yml?branch=main&style=for-the-badge&color=8A2BE2" alt="Build Status" /></a>
-  <a href="https://github.com/virubot/Autonomous-Research-Agent/blob/main/LICENSE"><img src="https://img.shields.io/github/license/virubot/Autonomous-Research-Agent?style=for-the-badge&color=4169E1" alt="License" /></a>
-  <a href="https://vitejs.dev/"><img src="https://img.shields.io/badge/Vite-React-646CFF?style=for-the-badge&logo=vite" alt="Frontend Platform" /></a>
-  <a href="https://fastapi.tiangolo.com/"><img src="https://img.shields.io/badge/FastAPI-Python-009688?style=for-the-badge&logo=fastapi" alt="Backend Engine" /></a>
+  <img src="https://img.shields.io/badge/Python-3.10%2B-blue?style=for-the-badge&logo=python&logoColor=white" alt="Python" />
+  <img src="https://img.shields.io/badge/FastAPI-0.100%2B-teal?style=for-the-badge&logo=fastapi&logoColor=white" alt="FastAPI" />
+  <img src="https://img.shields.io/badge/React-18-blue?style=for-the-badge&logo=react&logoColor=white" alt="React" />
+  <img src="https://img.shields.io/badge/Vite-5-purple?style=for-the-badge&logo=vite&logoColor=white" alt="Vite" />
+  <img src="https://img.shields.io/badge/License-MIT-green?style=for-the-badge" alt="MIT License" />
+  <img src="https://img.shields.io/badge/AI_Agents-Gemini_2.5-orange?style=for-the-badge&logo=google&logoColor=white" alt="AI Agents" />
+  <img src="https://img.shields.io/badge/Model_Context_Protocol-MCP-red?style=for-the-badge" alt="MCP" />
 </p>
 
 <p align="center">
   <a href="#-overview">Overview</a> •
   <a href="#-features">Features</a> •
+  <a href="#📸-dashboard-preview">Screenshots</a> •
   <a href="#-ai-agents">AI Agents</a> •
   <a href="#-rag-pipeline">RAG Pipeline</a> •
   <a href="#-research-workflow">Research Workflow</a> •
@@ -47,12 +51,40 @@ Academic writing requires an immense cognitive load, not just for content drafti
 
 ## ✨ Features
 
-- **Multi-Agent Orchestration:** Structured co-processing between the high-level `AgentPlanner` and the low-level `AgentExecutor` ensures target alignment.
-- **Academic Standard Compliance:** Out-of-the-box support for compiling visually authentic research manuscripts utilizing official templates: **IEEEtran**, **acmart (ACM)**, and **apa7**.
-- **Context-Aware RAG:** Synthesizes literature findings with inline citations (`[S1]`, `[S2]`) dynamically mapped to a structured bibliography block.
-- **Advanced Optical Character Recognition:** Robust text extraction from uploads of visual charts, graphs, or document pages using Tesseract OCR and Pillow.
-- **Persistent SQLite Telemetry Store:** Unified database schema persistently retaining system trace events, OCR results, and complete historical outputs.
-- **Obsidian-Inspired Dashboard:** Minimalist, high-performance web dashboard featuring real-time Markdown rendering, execution step telemetry, and interactive Mermaid graphs.
+| Feature Class | Capabilities & Description | Target Technologies |
+| :--- | :--- | :--- |
+| **🤖 Autonomous Agent Core** | Multi-stage reasoning loops coordinating tasks, scheduling resources, and self-correcting on downstream tool failures. | `AgentPlanner`, `AgentExecutor`, Gemini 2.5 |
+| **🔌 Model Context Protocol** | Standalone MCP implementation utilizing dynamic JSON-RPC standards for sandboxed tool loading. | `MCPServer`, `backend/mcp/` |
+| **📚 Document Processing & OCR** | Multi-page text extraction and parsing alongside Tesseract engine routines analyzing visual chart contents. | `pypdf`, `pytesseract`, `Pillow` |
+| **🔬 Publication-Grade LaTeX Engine** | Fully formatted template rendering supporting multi-column structures and double-pass compiler resolution. | `pdf_generator.py`, `pdflatex` |
+| **💾 Persistent Observation Store** | Persistent DB schemas retaining telemetry records, document indices, and execution trace lists. | SQLite (`agent_memory.db`) |
+| **🎨 Obsidian-Intelligence UI** | Sleek glassmorphic research control panel featuring Markdown displays, Mermaid charts, and SSE progress tracks. | React, Vite, Shadcn, Mermaid.js |
+
+---
+
+## 📸 Dashboard Preview
+
+<p align="center">
+  <img src="docs/screenshots/dashboard.png" width="100%" alt="Obsidian Research Dashboard" style="border-radius: 8px; border: 1px solid #222;" />
+</p>
+
+## 📄 PDF Analysis
+
+<p align="center">
+  <img src="docs/screenshots/pdf_analysis.png" width="100%" alt="Multipage PDF OCR & Chunking View" style="border-radius: 8px; border: 1px solid #222;" />
+</p>
+
+## 🤖 Agent Workflow
+
+<p align="center">
+  <img src="docs/screenshots/agent_workflow.png" width="100%" alt="Real-time Agent Telemetry & Log Tracking" style="border-radius: 8px; border: 1px solid #222;" />
+</p>
+
+## 🔍 Semantic Search
+
+<p align="center">
+  <img src="docs/screenshots/semantic_search.png" width="100%" alt="Dynamic Research Web Search Staging" style="border-radius: 8px; border: 1px solid #222;" />
+</p>
 
 ---
 
