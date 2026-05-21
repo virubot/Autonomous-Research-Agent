@@ -123,7 +123,7 @@ By leveraging a sophisticated multi-agent architecture powered by Google's Verte
 
 1. **Clone the repository:**
 ```bash
-git clone https://github.com/yourusername/autonomous-research-agent.git
+git clone https://github.com/virubot/autonomous-research-agent.git
 cd autonomous-research-agent
 ```
 
