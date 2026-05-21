@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="docs/assets/autonomous-research-banner.png" width="100%" alt="Autonomous Research Agent Banner"/>
+  <img src="docs/assets/research-banner.png" width="100%" alt="Autonomous Research Agent Banner"/>
 </p>
 
 <h1 align="center">
