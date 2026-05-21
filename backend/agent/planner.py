@@ -61,7 +61,10 @@ Allowed tool names:
 - none
 
 Workflow rules:
+- Treat the task as a multi-step agent execution, not a one-shot answer.
+- Decompose the workflow into goal understanding, evidence acquisition, synthesis, persistence, and optional export.
 - Use `web_search` for fresh external grounding when the user asks for current or factual research context.
+- Prefer authoritative sources such as official product documentation, arXiv, ACM, IEEE, DOI landing pages, and primary technical references.
 - Use `none` for reasoning or writing steps that do not call a tool.
 - Use `save_to_db` after content generation.
 - Use `upload_to_drive` only when upload_requested is true.
@@ -192,18 +195,30 @@ File context (optional):
         workflow = [
             {
                 "step": 1,
+                "action": "Clarify the research goal, deliverable type, and evidence requirements",
+                "tool": "none",
+                "input": {},
+            },
+            {
+                "step": 2,
                 "action": "Search fresh web sources for grounding context",
                 "tool": "web_search",
                 "input": {"query": query, "max_results": 5},
             },
             {
-                "step": 2,
+                "step": 3,
+                "action": "Identify implementation details, APIs, and system constraints from primary sources",
+                "tool": "web_search",
+                "input": {"query": f"{query} architecture implementation official documentation", "max_results": 5},
+            },
+            {
+                "step": 4,
                 "action": "Synthesize the final response from collected context",
                 "tool": "none",
                 "input": {},
             },
             {
-                "step": 3,
+                "step": 5,
                 "action": "Persist the run metadata",
                 "tool": "save_to_db",
                 "input": {},
@@ -212,7 +227,7 @@ File context (optional):
         if upload_requested:
             workflow.append(
                 {
-                    "step": 4,
+                    "step": 6,
                     "action": "Upload the generated artifact to Google Drive",
                     "tool": "upload_to_drive",
                     "input": {},
@@ -251,8 +266,13 @@ File context (optional):
             return [
                 "Abstract",
                 "Introduction",
-                "Approach",
-                "Findings",
+                "Related Work and System Context",
+                "System Architecture",
+                "Agent Workflow and Tool Orchestration",
+                "Data Acquisition and Preprocessing",
+                "Experimental Setup",
+                "Results and Analysis",
+                "Deployment, Scalability, and Limitations",
                 "Conclusion",
             ]
         if output_type == "summary":

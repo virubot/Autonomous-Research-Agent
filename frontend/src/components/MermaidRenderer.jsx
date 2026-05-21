@@ -1,7 +1,19 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import mermaid from "mermaid";
 
-mermaid.initialize({ startOnLoad: true });
+mermaid.initialize({
+  startOnLoad: true,
+  theme: 'dark',
+  themeVariables: {
+    primaryColor: '#1e1e2d',
+    primaryTextColor: '#e2e8f0',
+    primaryBorderColor: '#6366f1',
+    lineColor: '#818cf8',
+    secondaryColor: '#312e81',
+    tertiaryColor: '#1e1b4b',
+    fontFamily: 'Inter, sans-serif'
+  }
+});
 
 const mermaidBlock = /```mermaid\s*([\s\S]*?)```/i;
 
@@ -59,15 +71,15 @@ export const MermaidRenderer = ({ content }) => {
   }, [parsed.diagram]);
 
   return (
-    <div className="space-y-3">
+    <div className="space-y-4">
       {parsed.text && <p className="whitespace-pre-wrap">{parsed.text}</p>}
 
       {parsed.diagram && (
-        <div className="overflow-x-auto rounded-xl border border-border/40 bg-background/40 p-3">
+        <div className="overflow-x-auto rounded-2xl border border-white/5 bg-black/40 p-4 shadow-inner">
           {svg ? (
-            <div dangerouslySetInnerHTML={{ __html: svg }} />
+            <div dangerouslySetInnerHTML={{ __html: svg }} className="flex justify-center" />
           ) : (
-            <pre className="whitespace-pre-wrap text-[12px] text-muted-foreground">
+            <pre className="whitespace-pre-wrap text-[13px] text-muted-foreground/60 p-2">
               {error || parsed.diagram}
             </pre>
           )}

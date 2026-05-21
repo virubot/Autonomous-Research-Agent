@@ -21,41 +21,42 @@ class MemoryStore:
         with self._connect() as conn:
             conn.executescript(
                 """
-                CREATE TABLE IF NOT EXISTS topics (
+                CREATE TABLE IF NOT EXISTS runs (
                     id INTEGER PRIMARY KEY AUTOINCREMENT,
                     topic TEXT NOT NULL,
-                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-                );
-
-                CREATE TABLE IF NOT EXISTS sources (
-                    id INTEGER PRIMARY KEY AUTOINCREMENT,
-                    topic_id INTEGER NOT NULL,
-                    title TEXT,
-                    url TEXT,
-                    snippet TEXT,
-                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                    FOREIGN KEY(topic_id) REFERENCES topics(id)
-                );
-
-                CREATE TABLE IF NOT EXISTS outputs (
-                    id INTEGER PRIMARY KEY AUTOINCREMENT,
-                    topic_id INTEGER NOT NULL,
                     input_prompt TEXT NOT NULL,
                     output_type TEXT NOT NULL,
                     content TEXT NOT NULL,
                     plan_json TEXT,
                     drive_link TEXT,
-                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                    FOREIGN KEY(topic_id) REFERENCES topics(id)
+                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
                 );
-
+                CREATE TABLE IF NOT EXISTS sources (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    run_id INTEGER NOT NULL,
+                    title TEXT,
+                    url TEXT,
+                    snippet TEXT,
+                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                    FOREIGN KEY(run_id) REFERENCES runs(id)
+                );
                 CREATE TABLE IF NOT EXISTS uploaded_files (
                     id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    run_id INTEGER,
                     filename TEXT NOT NULL,
                     file_type TEXT NOT NULL,
                     file_path TEXT NOT NULL,
                     extracted_preview TEXT,
-                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                    FOREIGN KEY(run_id) REFERENCES runs(id)
+                );
+                CREATE TABLE IF NOT EXISTS events (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    run_id INTEGER,
+                    event_type TEXT NOT NULL,
+                    payload_json TEXT NOT NULL,
+                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                    FOREIGN KEY(run_id) REFERENCES runs(id)
                 );
                 """
             )
@@ -71,34 +72,13 @@ class MemoryStore:
         drive_link: str | None = None,
     ) -> dict[str, Any]:
         with self._connect() as conn:
-            topic_cursor = conn.execute(
-                "INSERT INTO topics (topic) VALUES (?)",
-                (topic,),
-            )
-            topic_id = topic_cursor.lastrowid
-
-            for source in sources:
-                conn.execute(
-                    """
-                    INSERT INTO sources (topic_id, title, url, snippet)
-                    VALUES (?, ?, ?, ?)
-                    """,
-                    (
-                        topic_id,
-                        source.get("title"),
-                        source.get("url"),
-                        source.get("snippet"),
-                    ),
-                )
-
-            output_cursor = conn.execute(
+            cursor = conn.execute(
                 """
-                INSERT INTO outputs (
-                    topic_id, input_prompt, output_type, content, plan_json, drive_link
-                ) VALUES (?, ?, ?, ?, ?, ?)
+                INSERT INTO runs (topic, input_prompt, output_type, content, plan_json, drive_link)
+                VALUES (?, ?, ?, ?, ?, ?)
                 """,
                 (
-                    topic_id,
+                    topic,
                     input_prompt,
                     output_type,
                     content,
@@ -106,17 +86,26 @@ class MemoryStore:
                     drive_link,
                 ),
             )
-
-        return {
-            "topic_id": topic_id,
-            "output_id": output_cursor.lastrowid,
-            "source_count": len(sources),
-        }
+            run_id = int(cursor.lastrowid)
+            for source in sources:
+                conn.execute(
+                    """
+                    INSERT INTO sources (run_id, title, url, snippet)
+                    VALUES (?, ?, ?, ?)
+                    """,
+                    (
+                        run_id,
+                        source.get("title"),
+                        source.get("url"),
+                        source.get("snippet"),
+                    ),
+                )
+        return {"run_id": run_id, "output_id": run_id, "source_count": len(sources)}
 
     def update_drive_link(self, output_id: int, drive_link: str) -> None:
         with self._connect() as conn:
             conn.execute(
-                "UPDATE outputs SET drive_link = ? WHERE id = ?",
+                "UPDATE runs SET drive_link = ? WHERE id = ?",
                 (drive_link, output_id),
             )
 
@@ -126,35 +115,44 @@ class MemoryStore:
         file_type: str,
         file_path: str,
         extracted_preview: str,
+        run_id: int | None = None,
     ) -> dict[str, Any]:
         with self._connect() as conn:
             cursor = conn.execute(
                 """
-                INSERT INTO uploaded_files (filename, file_type, file_path, extracted_preview)
-                VALUES (?, ?, ?, ?)
+                INSERT INTO uploaded_files (run_id, filename, file_type, file_path, extracted_preview)
+                VALUES (?, ?, ?, ?, ?)
                 """,
-                (filename, file_type, file_path, extracted_preview),
+                (run_id, filename, file_type, file_path, extracted_preview),
             )
-            file_id = cursor.lastrowid
+            file_id = int(cursor.lastrowid)
         return {"id": file_id, "filename": filename, "file_path": file_path}
+
+    def save_event(
+        self,
+        event_type: str,
+        payload: dict[str, Any],
+        run_id: int | None = None,
+    ) -> dict[str, Any]:
+        with self._connect() as conn:
+            cursor = conn.execute(
+                """
+                INSERT INTO events (run_id, event_type, payload_json)
+                VALUES (?, ?, ?)
+                """,
+                (run_id, event_type, json.dumps(payload)),
+            )
+            event_id = int(cursor.lastrowid)
+        return {"status": "success", "event_id": event_id}
 
     def get_history(self, limit: int = 20) -> list[dict[str, Any]]:
         safe_limit = max(1, min(limit, 100))
         with self._connect() as conn:
             rows = conn.execute(
                 """
-                SELECT
-                    o.id AS output_id,
-                    t.id AS topic_id,
-                    t.topic,
-                    o.input_prompt,
-                    o.output_type,
-                    o.content,
-                    o.drive_link,
-                    o.created_at
-                FROM outputs o
-                JOIN topics t ON t.id = o.topic_id
-                ORDER BY o.created_at DESC, o.id DESC
+                SELECT id, topic, input_prompt, output_type, content, drive_link, created_at
+                FROM runs
+                ORDER BY created_at DESC, id DESC
                 LIMIT ?
                 """,
                 (safe_limit,),
@@ -166,23 +164,32 @@ class MemoryStore:
                     """
                     SELECT title, url, snippet
                     FROM sources
-                    WHERE topic_id = ?
+                    WHERE run_id = ?
                     ORDER BY id ASC
                     """,
-                    (row["topic_id"],),
+                    (row["id"],),
                 ).fetchall()
-
+                file_rows = conn.execute(
+                    """
+                    SELECT id, filename, file_type, file_path, created_at
+                    FROM uploaded_files
+                    WHERE run_id = ?
+                    ORDER BY id ASC
+                    """,
+                    (row["id"],),
+                ).fetchall()
                 items.append(
                     {
-                        "output_id": row["output_id"],
-                        "topic_id": row["topic_id"],
+                        "output_id": row["id"],
                         "topic": row["topic"],
                         "input_prompt": row["input_prompt"],
                         "output_type": row["output_type"],
+                        "content": row["content"],
                         "content_preview": row["content"][:800],
                         "drive_link": row["drive_link"],
                         "created_at": row["created_at"],
                         "sources": [dict(source_row) for source_row in source_rows],
+                        "files": [dict(file_row) for file_row in file_rows],
                     }
                 )
         return items

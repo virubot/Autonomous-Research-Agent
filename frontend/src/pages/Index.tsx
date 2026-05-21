@@ -1,299 +1,326 @@
-import { useEffect, useRef, useState } from "react";
-import { FileText, MessageCircle, Microscope, Search, Sparkles } from "lucide-react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { MeshBackground } from "@/components/MeshBackground";
 import { ChatSidebar, type ChatSummary } from "@/components/ChatSidebar";
-import { ChatMessage, MessageBubble, TypingIndicator } from "@/components/ChatMessage";
 import { ChatInput } from "@/components/ChatInput";
-import { PaperGenerator } from "@/components/PaperGenerator";
+import { MessageBubble, TypingIndicator, type ChatMessage } from "@/components/ChatMessage";
 import { SourcesPanel } from "@/components/SourcesPanel";
-import { LaboratoryPanel } from "@/components/LaboratoryPanel";
-import { askAssistant, generatePaper } from "@/lib/api";
+import { PaperGenerator } from "@/components/PaperGenerator";
+import {
+  uploadResearchFile,
+  streamGenerate,
+  type AgentResponse,
+  type AgentSource,
+  type StreamEventName,
+  type OutputType,
+} from "@/lib/api";
 
-type ChatRecord = ChatSummary & { messages: ChatMessage[] };
+/* ── helpers ─────────────────────────────────────────────────── */
+const uid = () => crypto.randomUUID?.() ?? Math.random().toString(36).slice(2);
 
-const seedChats: ChatRecord[] = [
-  {
-    id: "c1",
-    title: "Transformer architectures overview",
-    preview: "Compare encoder-decoder vs decoder-only…",
-    updatedAt: "Today",
-    messages: [
-      {
-        id: "m1",
-        role: "assistant",
-        content:
-          "Welcome to AI Research Assistant. Ask me to summarize papers, compare methods, or draft a literature review. I'll cite sources as I go.",
-      },
-    ],
-  },
-  {
-    id: "c2",
-    title: "RAG vs fine-tuning trade-offs",
-    preview: "When does retrieval beat fine-tuning?",
-    updatedAt: "Yesterday",
-    messages: [
-      { id: "m1", role: "assistant", content: "Let's analyze RAG versus fine-tuning across cost, latency, and accuracy." },
-    ],
-  },
-  {
-    id: "c3",
-    title: "Diffusion models in biology",
-    preview: "Protein structure generation review",
-    updatedAt: "2d ago",
-    messages: [
-      { id: "m1", role: "assistant", content: "Here's a survey of diffusion approaches for biomolecular design." },
-    ],
-  },
-];
+function titleFromPrompt(prompt: string) {
+  const clean = prompt.replace(/\n/g, " ").trim();
+  return clean.length > 50 ? clean.slice(0, 47) + "…" : clean || "New chat";
+}
+
+const STAGE_LABELS: Record<string, string> = {
+  planning: "Building execution plan…",
+  searching: "Searching the web…",
+  processing: "Processing files…",
+  generating: "Generating final output…",
+  uploading: "Uploading to Google Drive…",
+};
+
+/* ── component ───────────────────────────────────────────────── */
+type ChatRecord = {
+  id: string;
+  title: string;
+  messages: ChatMessage[];
+  sources: AgentSource[];
+};
 
 const Index = () => {
-  const [chats, setChats] = useState<ChatRecord[]>(seedChats);
-  const [activeId, setActiveId] = useState<string>(seedChats[0].id);
+  /* sidebar */
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+
+  /* chats */
+  const [chats, setChats] = useState<ChatRecord[]>([]);
+  const [activeId, setActiveId] = useState<string>("");
+
+  /* input */
   const [input, setInput] = useState("");
-  const [mode, setMode] = useState<"chat" | "paper">("chat");
-  const [isThinking, setIsThinking] = useState(false);
-  const [collapsed, setCollapsed] = useState(false);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+
+  /* agent state */
+  const [loading, setLoading] = useState(false);
+  const [stage, setStage] = useState<string | undefined>(undefined);
+  const [liveSteps, setLiveSteps] = useState<string[]>([]);
+
   const scrollRef = useRef<HTMLDivElement>(null);
+  const historyLoaded = useRef(false);
+  const streamCloseRef = useRef<(() => void) | null>(null);
 
-  const active = chats.find((c) => c.id === activeId)!;
-  const latestAssistantWithSources = [...active.messages]
-    .reverse()
-    .find((message) => message.role === "assistant" && (message.sources?.length ?? 0) > 0);
-  const activeSources = latestAssistantWithSources?.sources ?? [];
+  /* active chat helper */
+  const active = chats.find((c) => c.id === activeId);
+  const messages = active?.messages ?? [];
+  const sources = active?.sources ?? [];
 
+  /* scroll to bottom */
   useEffect(() => {
-    // Auto-collapse on small screens
-    const onResize = () => setCollapsed(window.innerWidth < 768);
-    onResize();
-    window.addEventListener("resize", onResize);
-    return () => window.removeEventListener("resize", onResize);
+    const el = scrollRef.current;
+    if (el) el.scrollTop = el.scrollHeight;
+  }, [messages.length, loading, liveSteps]);
+
+  /* ── clean startup: no auto history load ── */
+  useEffect(() => {
+    if (historyLoaded.current) return;
+    historyLoaded.current = true;
+    // Start with a single blank chat — history is opt-in only
+    const id = uid();
+    setChats([{ id, title: "New chat", messages: [], sources: [] }]);
+    setActiveId(id);
   }, []);
 
-  useEffect(() => {
-    scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: "smooth" });
-  }, [active.messages.length, isThinking, activeId]);
-
-  const updateActive = (updater: (c: ChatRecord) => ChatRecord) => {
-    setChats((prev) => prev.map((c) => (c.id === activeId ? updater(c) : c)));
-  };
-
-  const handleSend = async () => {
-    const text = input.trim();
-    if (!text) return;
-    const chatId = activeId;
-    const userMsg: ChatMessage = { id: crypto.randomUUID(), role: "user", content: text };
-    updateActive((c) => ({
-      ...c,
-      title: c.messages.length <= 1 ? text.slice(0, 42) : c.title,
-      preview: text.slice(0, 60),
-      messages: [...c.messages, userMsg],
-    }));
+  /* ── new / select / delete chat ── */
+  const handleNewChat = useCallback(() => {
+    const id = uid();
+    setChats((prev) => [{ id, title: "New chat", messages: [], sources: [] }, ...prev]);
+    setActiveId(id);
     setInput("");
-    setIsThinking(true);
+    setSelectedFile(null);
+    setLiveSteps([]);
+    setStage(undefined);
+  }, []);
+
+  const handleSelectChat = useCallback((id: string) => {
+    setActiveId(id);
+    setInput("");
+    setSelectedFile(null);
+    setLiveSteps([]);
+    setStage(undefined);
+  }, []);
+
+  const handleDeleteChat = useCallback(
+    (id: string) => {
+      const fallbackId = uid();
+      setChats((prev) => {
+        const next = prev.filter((c) => c.id !== id);
+        if (next.length === 0) {
+          const replacement = { id: fallbackId, title: "New chat", messages: [], sources: [] };
+          setActiveId(replacement.id);
+          return [replacement];
+        }
+        if (id === activeId) {
+          setActiveId(next[0].id);
+        }
+        return next;
+      });
+    },
+    [activeId]
+  );
+
+  /* ── append message ── */
+  const appendMessage = useCallback(
+    (msg: ChatMessage, chatSources?: AgentSource[]) => {
+      setChats((prev) =>
+        prev.map((c) =>
+          c.id === activeId
+            ? {
+                ...c,
+                title: c.title === "New chat" && msg.role === "user" ? titleFromPrompt(msg.content) : c.title,
+                messages: [...c.messages, msg],
+                sources: chatSources ?? c.sources,
+              }
+            : c
+        )
+      );
+    },
+    [activeId]
+  );
+
+  /* ── handle send ── */
+  const handleSend = useCallback(async () => {
+    const prompt = input.trim();
+    const file = selectedFile;
+
+    if (!prompt && !file) return;
+    if (loading) return;
+
+    const userContent = file ? `${prompt || "Analyze this file"}\n📎 ${file.name}` : prompt;
+    appendMessage({ id: uid(), role: "user", content: userContent });
+    setInput("");
+    setSelectedFile(null);
+    setLoading(true);
+    setStage(undefined);
+    setLiveSteps([]);
 
     try {
-      const data =
-        mode === "paper"
-          ? await generatePaper(text)
-          : await askAssistant(text);
+      let result: AgentResponse;
 
-      const aiMsg: ChatMessage = {
-        id: crypto.randomUUID(),
-        role: "assistant",
-        content: data.output || "No useful research data found.",
-        sources: data.sources,
-        steps: data.steps,
-        driveLink: data.drive_link,
-      };
-      setChats((prev) => prev.map((c) => (c.id === chatId ? { ...c, messages: [...c.messages, aiMsg] } : c)));
-    } catch (error) {
-      console.error("Assistant request failed:", error);
-      const aiMsg: ChatMessage = {
-        id: crypto.randomUUID(),
-        role: "assistant",
-        content: error instanceof Error ? error.message : "Assistant request failed.",
-      };
-      setChats((prev) => prev.map((c) => (c.id === chatId ? { ...c, messages: [...c.messages, aiMsg] } : c)));
-    } finally {
-      setIsThinking(false);
-    }
-  };
-
-  const handleNewChat = () => {
-    const id = crypto.randomUUID();
-    const newChat: ChatRecord = {
-      id,
-      title: "New research thread",
-      preview: "Start a new investigation…",
-      updatedAt: "Now",
-      messages: [
-        {
-          id: crypto.randomUUID(),
-          role: "assistant",
-          content:
-            "New session ready. What topic should we investigate? I can search papers, summarize findings, or draft sections.",
-        },
-      ],
-    };
-    setChats((prev) => [newChat, ...prev]);
-    setActiveId(id);
-  };
-
-  const handleDeleteChat = (id: string) => {
-    setChats((prev) => {
-      const next = prev.filter((c) => c.id !== id);
-      if (next.length === 0) {
-        const fresh: ChatRecord = {
-          id: crypto.randomUUID(),
-          title: "New research thread",
-          preview: "Start a new investigation…",
-          updatedAt: "Now",
-          messages: [
-            {
-              id: crypto.randomUUID(),
-              role: "assistant",
-              content:
-                "New session ready. What topic should we investigate? I can search papers, summarize findings, or draft sections.",
-            },
-          ],
-        };
-        setActiveId(fresh.id);
-        return [fresh];
+      if (file) {
+        // ── file upload path (no SSE yet for upload) ──
+        setStage("Uploading and processing file…");
+        result = await uploadResearchFile(file, prompt || "Analyze this file");
+        setStage(undefined);
+      } else {
+        // ── streaming path ──
+        result = await new Promise<AgentResponse>((resolve, reject) => {
+          const close = streamGenerate(
+            { prompt, outputType: "summary" as OutputType },
+            (event: StreamEventName, data: unknown) => {
+              if (event === "error") {
+                reject(
+                  new Error(
+                    (data as { message?: string })?.message ?? "Agent execution failed."
+                  )
+                );
+                return;
+              }
+              if (event === "completed") {
+                resolve(data as AgentResponse);
+                return;
+              }
+              // live step updates
+              const label = STAGE_LABELS[event];
+              if (label) setStage(label);
+              const payload = data as { message?: string };
+              if (payload?.message) {
+                setLiveSteps((prev) =>
+                  prev.includes(payload.message!) ? prev : [...prev, payload.message!]
+                );
+              }
+            }
+          );
+          streamCloseRef.current = close;
+        });
+        setStage(undefined);
       }
-      if (id === activeId) setActiveId(next[0].id);
-      return next;
-    });
-  };
 
-  const isEmpty = active.messages.length <= 1;
+      appendMessage(
+        {
+          id: uid(),
+          role: "assistant",
+          content: result.output,
+          sources: result.sources,
+          steps: result.steps,
+          driveLink: result.drive_link,
+        },
+        result.sources
+      );
+    } catch (err) {
+      appendMessage({
+        id: uid(),
+        role: "assistant",
+        content: `⚠️ ${err instanceof Error ? err.message : "Something went wrong."}`,
+      });
+    } finally {
+      setLoading(false);
+      setStage(undefined);
+      setLiveSteps([]);
+      streamCloseRef.current = null;
+    }
+  }, [input, selectedFile, loading, appendMessage]);
 
+  /* ── sidebar summaries ── */
+  const sidebarChats: ChatSummary[] = chats.map((c) => {
+    const lastMsg = c.messages[c.messages.length - 1];
+    return {
+      id: c.id,
+      title: c.title,
+      preview: lastMsg ? lastMsg.content.slice(0, 60) : "",
+      updatedAt: "",
+    };
+  });
+
+  /* ── render ── */
   return (
-    <div className="relative flex h-screen w-full overflow-hidden">
+    <div className="flex h-full overflow-hidden">
       <MeshBackground />
 
+      {/* Sidebar */}
       <ChatSidebar
-        chats={chats}
+        chats={sidebarChats}
         activeId={activeId}
-        onSelect={setActiveId}
+        onSelect={handleSelectChat}
         onNewChat={handleNewChat}
         onDeleteChat={handleDeleteChat}
-        collapsed={collapsed}
-        onToggle={() => setCollapsed((v) => !v)}
+        collapsed={sidebarCollapsed}
+        onToggle={() => setSidebarCollapsed((v) => !v)}
       />
 
-      {/* Main */}
-      <main className="flex min-w-0 flex-1 flex-col">
-        {/* Header — floats on background, no hard divider */}
-        <header className="z-10 flex items-center justify-between gap-3 px-6 py-5 md:px-10">
-          <div className="flex items-center gap-3">
-            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary/15 text-primary backdrop-blur-sm">
-              <Microscope className="h-4 w-4" strokeWidth={2.2} />
-            </div>
-            <div>
-              <h1 className="text-[15px] font-semibold leading-tight text-foreground">
-                AI Research Assistant
-              </h1>
-              <p className="text-[12px] text-muted-foreground">
-                Search · Analyze · Generate Research Papers
-              </p>
-            </div>
-          </div>
-          <div className="hidden items-center gap-2 rounded-full bg-foreground/[0.05] px-3 py-1 backdrop-blur-sm md:flex">
-            <span className="h-1.5 w-1.5 rounded-full bg-primary" />
-            <span className="text-[11px] font-medium text-muted-foreground">Online</span>
-          </div>
-        </header>
-
-        {/* Body: messages + right rail */}
-        <div className="flex min-h-0 flex-1">
-          {/* Messages column */}
-          <section className="relative flex min-w-0 flex-1 flex-col">
-            <div ref={scrollRef} className="flex-1 overflow-y-auto px-4 pt-6 pb-4 md:px-10">
-              <div className="mx-auto w-full max-w-3xl space-y-7">
-                {isEmpty && (
-                  <div className="animate-fade-in py-10 text-center">
-                    <div className="mx-auto mb-5 flex h-12 w-12 items-center justify-center rounded-2xl bg-primary/15 text-primary backdrop-blur-sm">
-                      <Sparkles className="h-5 w-5" strokeWidth={2.2} />
-                    </div>
-                    <h2 className="text-[24px] font-semibold tracking-tight text-foreground md:text-[28px]">
-                      What would you like to research?
-                    </h2>
-                    <p className="mx-auto mt-2 max-w-md text-[13px] text-muted-foreground">
-                      Ask a question, request a literature review, or generate a draft paper.
-                    </p>
-                    <div className="mx-auto mt-8 grid max-w-2xl grid-cols-1 gap-2.5 sm:grid-cols-2">
-                      {[
-                        "Summarize recent work on retrieval-augmented generation",
-                        "Compare LoRA vs full fine-tuning on small models",
-                        "Find papers on diffusion models in protein design",
-                        "Draft an abstract on multimodal reasoning benchmarks",
-                      ].map((q) => (
-                        <button
-                          key={q}
-                          onClick={() => setInput(q)}
-                          className="ring-focus group flex items-start gap-2 rounded-xl bg-foreground/[0.04] px-3.5 py-3 text-left text-[13px] text-muted-foreground backdrop-blur-sm transition-all hover:bg-foreground/[0.07] hover:text-foreground"
-                        >
-                          <Search className="mt-0.5 h-3.5 w-3.5 shrink-0 text-muted-foreground transition-colors group-hover:text-primary" />
-                          <span>{q}</span>
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                )}
-
-                {active.messages.map((m) => (
-                  <MessageBubble key={m.id} message={m} />
-                ))}
-                {isThinking && <TypingIndicator />}
-                <div className="h-4" />
-              </div>
-            </div>
-
-            {/* Input — floating, no top border, soft fade */}
-            <div className="relative px-4 pb-5 pt-2 md:px-10">
-              {/* Subtle fade from background to input area */}
-              <div
-                className="pointer-events-none absolute inset-x-0 -top-12 h-12"
-                style={{
-                  background:
-                    "linear-gradient(to bottom, transparent, hsl(var(--background) / 0.4))",
-                }}
-              />
-              <div className="mx-auto w-full max-w-3xl">
-                <div className="mb-3 flex justify-center">
-                  <div className="glass-subtle flex rounded-xl p-1">
-                    <button
-                      type="button"
-                      onClick={() => setMode("chat")}
-                      className={`ring-focus flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-[12px] font-medium transition-colors ${
-                        mode === "chat"
-                          ? "bg-primary text-primary-foreground"
-                          : "text-muted-foreground hover:bg-foreground/[0.06] hover:text-foreground"
-                      }`}
-                    >
-                      <MessageCircle className="h-3.5 w-3.5" />
-                      Chat Mode
-                    </button>
-                  </div>
+      {/* Main chat area */}
+      <main className="relative flex min-w-0 flex-1 flex-col">
+        {/* Messages */}
+        <div ref={scrollRef} className="flex-1 overflow-y-auto px-4 pt-6 pb-4 md:px-8">
+          <div className="mx-auto flex max-w-3xl flex-col gap-5">
+            {messages.length === 0 && !loading && (
+              <div className="flex flex-col items-center justify-center pt-[20vh] pb-10 text-center animate-fade-in">
+                <div className="mb-6 flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-primary/20 to-accent/20 text-primary shadow-[0_0_30px_rgba(100,70,255,0.2)] backdrop-blur-md">
+                  <span className="text-3xl">✨</span>
                 </div>
-                <ChatInput value={input} onChange={setInput} onSend={handleSend} disabled={isThinking} />
-                <p className="mt-2 text-center text-[11px] text-muted-foreground">
-                  Responses are AI-generated. Verify citations before publishing.
+                <h1 className="text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
+                  What are we researching today?
+                </h1>
+                <p className="mt-4 max-w-lg text-[15px] leading-relaxed text-muted-foreground">
+                  Upload a document, ask a technical question, or request a full academic paper generation.
                 </p>
+                
+                <div className="mt-10 flex flex-wrap justify-center gap-3">
+                  {["Summarize the latest AI papers", "Generate an IEEE paper structure", "Analyze my uploaded PDF"].map((suggestion) => (
+                    <button
+                      key={suggestion}
+                      onClick={() => setInput(suggestion)}
+                      className="rounded-xl border border-white/10 bg-black/40 px-4 py-2.5 text-[13px] font-medium text-muted-foreground transition-all hover:bg-white/10 hover:text-foreground shadow-soft"
+                    >
+                      {suggestion}
+                    </button>
+                  ))}
+                </div>
               </div>
-            </div>
-          </section>
+            )}
 
-          {/* Right rail — floating panels, no hard divider */}
-          <aside className="hidden w-80 shrink-0 flex-col gap-5 overflow-y-auto px-5 py-6 lg:flex">
-            <PaperGenerator />
-            <div className="glass rounded-2xl px-3 py-3">
-              <SourcesPanel sources={activeSources} />
-            </div>
-            <LaboratoryPanel />
-          </aside>
+            {messages.map((msg) => (
+              <MessageBubble key={msg.id} message={msg} />
+            ))}
+
+            {loading && <TypingIndicator stage={stage} />}
+          </div>
+        </div>
+
+        {/* Agent live steps bar */}
+        {loading && liveSteps.length > 0 && (
+          <div className="mx-auto flex w-full max-w-3xl flex-wrap gap-1.5 px-4 pb-2 md:px-8 animate-fade-in">
+            {liveSteps.map((s, i) => (
+              <span key={i} className="rounded-full bg-primary/10 px-2.5 py-0.5 text-[10px] font-medium text-primary animate-fade-in">
+                ✓ {s}
+              </span>
+            ))}
+          </div>
+        )}
+
+        {/* Input Area */}
+        <div className="relative px-4 pb-6 pt-4 md:px-8">
+          {/* Transparent fade mask at the top of the input container */}
+          <div className="absolute inset-x-0 top-0 -mt-8 h-8 bg-gradient-to-t from-[#060608]/90 to-transparent pointer-events-none" />
+          
+          <div className="mx-auto max-w-3xl">
+            <ChatInput
+              value={input}
+              onChange={setInput}
+              onSend={handleSend}
+              onFileSelect={setSelectedFile}
+              selectedFile={selectedFile}
+              onClearFile={() => setSelectedFile(null)}
+              disabled={loading}
+            />
+          </div>
         </div>
       </main>
+
+      {/* Right panel — sources + paper generator */}
+      <aside className="hidden w-80 flex-col gap-4 overflow-y-auto border-l border-white/5 bg-[#060608]/40 backdrop-blur-2xl p-4 lg:flex">
+        <PaperGenerator />
+        <SourcesPanel sources={sources} />
+      </aside>
     </div>
   );
 };

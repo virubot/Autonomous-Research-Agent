@@ -1,175 +1,156 @@
-# AI Research Agent 🚀
+# Autonomous Research Agent
 
-[![MIT License](https://img.shields.io/badge/License-MIT-green.svg)](https://opensource.org/licenses/MIT)
-[![Node.js](https://img.shields.io/badge/Node.js-v18+-68a063.svg)](https://nodejs.org/)
-[![FastAPI](https://img.shields.io/badge/FastAPI-v0.100+-009688.svg)](https://fastapi.tiangolo.com/)
-[![React](https://img.shields.io/badge/React-18-61dafb.svg)](https://reactjs.org/)
-[![Groq](https://img.shields.io/badge/Powered_by-Groq-orange.svg)](https://groq.com/)
-[![Puppeteer](https://img.shields.io/badge/PDF_Engine-Puppeteer-blue.svg)](https://pptr.dev/)
-
-**Agent** is a state-of-the-art, multi-service autonomous agent designed to generate professional, high-fidelity IEEE-style research papers. By orchestrating a hybrid backend (FastAPI + Node.js) and a modern React frontend, it transforms a single topic into a complete, print-ready academic document with zero manual formatting required.
+> An advanced, AI-powered multi-agent system for autonomous academic research, literature review, and publication-ready paper generation.
 
 ---
 
-## 📖 Table of Contents
-- [✨ Key Features](#-key-features)
-- [🏗 Architecture](#-architecture)
-- [🛠 Tech Stack](#-tech-stack)
-- [🚀 Quick Start](#-quick-start)
-- [📂 Project Structure](#-project-structure)
-- [🔧 API Endpoints](#-api-endpoints)
-- [🤝 Contributing](#-contributing)
-- [📜 License](#-license)
+## 🚀 Overview
+
+The **Autonomous Research Agent** is a cutting-edge, production-grade AI system designed to automate the end-to-end academic research lifecycle. Built for researchers, academics, and developers, it transforms simple prompts or uploaded documents into highly structured, publication-ready research papers (IEEE, APA, ACM).
+
+By leveraging a sophisticated multi-agent architecture powered by Google's Vertex AI (Gemini 2.5), the system autonomously plans research steps, executes web searches, extracts data from PDFs and images via OCR, synthesizes information, and compiles high-fidelity LaTeX PDFs.
 
 ---
 
-## ✨ Key Features
+## ✨ Features
 
-- 🏛 **Academic Typesetting**: Automatic 2-column layout conforming strictly to IEEE conference standards.
-- 🤖 **Multi-Agent Pipeline**: Sophisticated content generation across Abstract, Introduction, Methodology, Architecture, Results, and Conclusion.
-- 📊 **Dynamic Diagrams**: Generates **Mermaid.js** flowcharts and system architectures based on your topic.
-- 📐 **Scientific Precision**: Full **MathJax** integration for rendering complex mathematical equations.
-- 📑 **IEEE References**: Automatically generates and formats academic references in IEEE style.
-- ⚡ **Turbocharged LLMs**: Powered by **Groq** (Llama 3.1) for lightning-fast content synthesis.
-- 🎨 **Modern Dashboard**: Sleek, responsive React UI built with TailwindCSS and Shadcn/UI components.
+### 🤖 AI & Multi-Agent System
+- **Autonomous Reasoning:** Dynamic step-by-step planning and execution using the `AgentExecutor` and `planner`.
+- **Model Context Protocol (MCP):** Fully integrated MCP server allowing the agent to dynamically discover and use external tools.
+- **Vertex AI Integration:** Powered by Google's state-of-the-art Gemini 2.5 Flash and Lite models with robust error recovery and fallback mechanisms.
 
----
+### 📚 Research & Document Analysis
+- **Deep Web Search:** Integrated DuckDuckGo search for real-time context gathering and citation discovery.
+- **Advanced Document Parsing:** Robust extraction of text from uploaded PDFs (`pypdf`).
+- **Optical Character Recognition (OCR):** Image text extraction using `pytesseract` and `Pillow`.
+- **Unified Memory Store:** Persistent SQLite databases (`agent_memory.db`, `agent_events.db`, `pdf_files.db`) for retaining research context across sessions.
 
-## 🏗 Architecture
+### 📝 Academic Paper Generation
+- **Publication-Ready Output:** High-fidelity LaTeX pipeline producing visually authentic, conference-ready PDFs.
+- **Template Support:** Native support for IEEE, APA, and ACM formatting standards.
+- **Automated Citations:** Intelligent bibliography management preventing JSON leakage and ensuring accurate academic referencing.
 
-Virubot employs a distributed architecture to handle the complex requirements of research paper generation:
+### 💻 UI/UX & Dashboard
+- **Modern Architecture:** Sleek, responsive React frontend built with Vite.
+- **Premium Design:** Utilizing Tailwind CSS, Shadcn UI, Radix UI, and Framer Motion for a fluid, "Obsidian-like" intelligence experience.
+- **Real-Time Rendering:** Live Markdown rendering and Mermaid diagram support within the conversational interface.
 
-1.  **Frontend (React/Vite)**: A high-performance UI for topic input, real-time generation monitoring, and PDF previewing.
-2.  **Node API (Express)**: The primary orchestrator. It manages LLM streaming, handles Mermaid/MathJax rendering via Puppeteer, and manages file persistence.
-3.  **Research Backend (FastAPI)**: Handles heavy-duty data processing, research analysis, and complex agentic workflows using RAG.
-
----
-
-## 🛠 Tech Stack
-
-| Component | Technology |
-| :--- | :--- |
-| **Frontend** | React 18, Vite, TailwindCSS, Shadcn/UI, TypeScript |
-| **Orchestration** | Node.js, Express |
-| **Research Engine** | Python 3.10+, FastAPI, Uvicorn |
-| **LLM Engine** | Groq API (Llama 3.1 70B/8B), OpenAI SDK |
-| **PDF Rendering** | Puppeteer (Headless Chrome), HTML5, CSS3 |
-| **Visualization** | Mermaid.js, MathJax |
+### ☁️ Infrastructure & Integrations
+- **Google Drive Integration:** Automated uploading of generated papers and assets to Google Drive.
+- **FastAPI Backend:** High-performance, asynchronous Python backend.
 
 ---
 
-## 🚀 Quick Start
+## 🧠 How It Works
 
-### 1. Prerequisites
-- **Node.js** (v18 or higher)
-- **Python** (v3.10 or higher)
-- **Groq API Key** (Get one at [console.groq.com](https://console.groq.com))
+1. **User Request:** The user provides a research topic, prompt, or uploads source material (PDFs/Images) via the React dashboard.
+2. **Task Planning:** The `AgentExecutor` on the FastAPI backend analyzes the request and generates a multi-step research plan.
+3. **Information Gathering:** The agent invokes MCP tools to perform web searches (`web_search`), extract document data (`extract_pdf`, `extract_image`), and stores findings in the SQLite `agent_memory.db`.
+4. **Synthesis:** The AI synthesizes the gathered literature, structuring the content according to strict academic guidelines and depth requirements.
+5. **LaTeX Compilation:** The structured data is passed through the `pdf_generator`, which maps it to specific templates (IEEE/APA/ACM) and securely compiles it into a PDF using LaTeX.
+6. **Delivery:** The final PDF is served to the frontend for viewing/download or automatically exported to Google Drive.
 
-### 2. Installation
+---
 
-Clone the repository and install dependencies for all modules:
+## 🏗️ Tech Stack
 
-```bash
-git clone https://github.com/virubot/ResearchPaper_Agent.git
-cd ResearchPaper_Agent
+### Frontend
+| Technology | Description |
+|---|---|
+| **React 18 & Vite** | Blazing fast, modern UI framework and bundler. |
+| **Tailwind CSS** | Utility-first CSS framework for rapid styling. |
+| **Shadcn UI & Radix** | Accessible, customizable headless components. |
+| **Framer Motion** | Fluid animations and page transitions. |
+| **React Markdown** | Real-time markdown and Mermaid diagram rendering. |
 
-# Setup Node Backend
-cd node-backend && npm install
+### Backend
+| Technology | Description |
+|---|---|
+| **FastAPI & Uvicorn** | High-performance, async Python web framework. |
+| **Google Vertex AI** | LLM provider (Gemini 2.5 Flash/Lite). |
+| **Pydantic** | Strict data validation and settings management. |
+| **SQLite** | Lightweight, persistent vector/memory storage. |
 
-# Setup Frontend
-cd ../frontend && npm install
-
-# Setup Research Backend (Python)
-cd ..
-python -m venv .venv
-source .venv/bin/activate  # Mac/Linux
-pip install -r requirements.txt
-```
-
-### 3. Configuration
-
-Create a `.env` file in the `node-backend/` directory:
-
-```env
-GROQ_API_KEY=your_groq_api_key_here
-PORT=5001
-```
-
-### 4. Running the Application
-
-Simply run the startup script from the root directory:
-
-```bash
-chmod +x start.sh
-./start.sh
-```
-
-The application will be available at:
-- **Frontend**: `http://localhost:5173`
-- **Node API**: `http://localhost:5001`
-- **Research API**: `http://localhost:8000`
+### Document & AI Processing
+| Technology | Description |
+|---|---|
+| **LaTeX (pdfLaTeX)** | Professional academic document compilation. |
+| **Tesseract & Pillow** | OCR and image processing pipeline. |
+| **PyPDF** | Robust PDF parsing and text extraction. |
+| **DuckDuckGo Search** | Real-time web search and citation fetching. |
 
 ---
 
 ## 📂 Project Structure
 
-```text
-.
-├── frontend/             # React + Vite application (UI/UX)
-├── node-backend/         # Express API & Puppeteer Rendering
-│   ├── services/         # LLM orchestration & PDF logic
-│   ├── routes/           # API Endpoints
-│   └── utils/            # IEEE Templates & CSS
-├── backend/              # FastAPI Research Engine (RAG/Logic)
-├── generated_pdfs/       # Saved research papers
-├── start.sh              # Unified startup script
-└── requirements.txt      # Python dependencies
+```bash
+/
+├── backend/                  # FastAPI Backend Application
+│   ├── agent/                # Multi-agent logic, planner, memory, and executor
+│   ├── mcp/                  # Model Context Protocol server implementation
+│   ├── routes/               # API endpoints (generation, uploads)
+│   ├── services/             # Core business logic
+│   ├── paper_templates/      # LaTeX templates (IEEE, APA, ACM)
+│   ├── tools/                # Agent tools (search, OCR, PDF extraction)
+│   ├── utils/                # Configuration and shared utilities
+│   └── main.py               # Application entry point
+├── frontend/                 # React + Vite Frontend Application
+│   ├── src/
+│   │   ├── components/       # Reusable UI components (Shadcn)
+│   │   ├── pages/            # Main application views/dashboard
+│   │   ├── hooks/            # Custom React hooks
+│   │   ├── lib/              # Utility functions
+│   │   ├── App.tsx           # Main application component
+│   │   └── main.tsx          # React DOM entry
+│   ├── package.json          # Frontend dependencies
+│   └── tailwind.config.ts    # Styling configuration
+├── start.sh                  # Unified startup script for both services
+├── requirements.txt          # Python backend dependencies
+└── .env.example              # Environment variables template
 ```
 
 ---
 
-## 🔧 API Endpoints (Node Backend)
+## 🚀 Getting Started
 
-### `POST /api/paper/generate`
-Generates a complete research paper based on the provided topic.
+### Prerequisites
+- Node.js (v18+)
+- Python (3.10+)
+- LaTeX distribution (`texlive` or `mactex` for compiling PDFs)
+- Tesseract OCR (for image extraction)
 
-**Request Body:**
-```json
-{
-  "topic": "The Impact of Quantum Computing on Modern Cryptography"
-}
+### Installation
+
+1. **Clone the repository:**
+```bash
+git clone https://github.com/yourusername/autonomous-research-agent.git
+cd autonomous-research-agent
 ```
 
-**Response:**
-```json
-{
-  "paper": "<html>...</html>",
-  "title": "Quantum Computing...",
-  "wordCount": 2850,
-  "pageCount": 6
-}
+2. **Configure Environment:**
+Copy the example environment file and add your Google Cloud credentials.
+```bash
+cp .env.example .env
 ```
 
----
+3. **Install Dependencies:**
+The startup script handles the virtual environment, but you can manually install:
+```bash
+# Backend
+python -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
 
-## 🤝 Contributing
+# Frontend
+cd frontend
+npm install
+```
 
-We welcome contributions! Please feel free to submit a Pull Request.
-
-1. Fork the Project
-2. Create your Feature Branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your Changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the Branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
-
----
-
-## 📜 License
-
-Distributed under the MIT License. See `LICENSE` for more information.
-
----
-
-<p align="center">
-  Built with ❤️ by <strong>Virubot</strong> and the Open Source Community
-</p>
+4. **Run the Application:**
+Use the provided bash script to start both the FastAPI backend and Vite frontend concurrently.
+```bash
+./start.sh
+```
+- Frontend: `http://localhost:5173`
+- Backend API: `http://localhost:8000`
+- API Documentation: `http://localhost:8000/docs`

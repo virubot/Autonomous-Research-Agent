@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>{{ title }}</title>
+    <style>
+        @page { size: letter; margin: 1in; }
+        body { font-family: "Linux Libertine", "Times New Roman", serif; font-size: 9pt; line-height: 1.3; column-count: 2; column-gap: 0.33in; }
+        h1 { text-align: left; font-size: 18pt; font-weight: bold; margin-bottom: 18pt; column-span: all; font-family: "Linux Biolinum", "Arial", sans-serif; }
+        .authors { text-align: left; margin-bottom: 18pt; column-span: all; }
+        .abstract-title { font-weight: bold; font-size: 9pt; text-transform: uppercase; margin-bottom: 6pt; }
+        .abstract { margin-bottom: 12pt; font-weight: bold; }
+        .keywords { margin-bottom: 24pt; }
+        h2 { font-size: 10pt; font-weight: bold; text-transform: uppercase; margin-top: 12pt; margin-bottom: 6pt; font-family: "Linux Biolinum", "Arial", sans-serif; }
+        p { text-align: justify; margin-top: 0; margin-bottom: 6pt; }
+        .references { margin-top: 24pt; }
+        .references h2 { text-transform: uppercase; }
+        .ref-item { margin-bottom: 4pt; }
+    </style>
+</head>
+<body>
+    <h1>{{ title }}</h1>
+    <div class="authors">Autonomous AI Researcher</div>
+    
+    <div class="abstract-title">Abstract</div>
+    <p class="abstract">{{ abstract }}</p>
+    {% if keywords %}
+    <div class="abstract-title">Keywords</div>
+    <p class="keywords">{{ keywords | join(', ') }}</p>
+    {% endif %}
+
+    {% for section in sections %}
+        <h2>{{ loop.index }}. {{ section.title }}</h2>
+        {% for p in section.content %}
+            <p>{{ p }}</p>
+        {% endfor %}
+    {% endfor %}
+
+    <div class="references">
+        <h2>References</h2>
+        {% for ref in references %}
+            <div class="ref-item">[{{ loop.index }}] {{ ref.text if ref.text else ref }}</div>
+        {% endfor %}
+    </div>
+</body>
+</html>

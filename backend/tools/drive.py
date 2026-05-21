@@ -17,15 +17,17 @@ def upload_to_drive(file_path: str, settings: Settings) -> dict[str, Any]:
             "error": f"Google Drive dependencies are unavailable: {exc}",
         }
 
-    if not settings.drive_service_account_json:
+    credential_setting = settings.drive_service_account_json or settings.google_application_credentials
+    if not credential_setting:
         return {
             "status": "error",
-            "error": "GOOGLE_DRIVE_SERVICE_ACCOUNT_JSON is not configured.",
+            "error": (
+                "Google Drive credentials missing. Set GOOGLE_DRIVE_SERVICE_ACCOUNT_JSON "
+                "or GOOGLE_APPLICATION_CREDENTIALS."
+            ),
         }
 
-    credentials_path = settings.drive_service_account_path or Path(
-        settings.drive_service_account_json
-    ).expanduser()
+    credentials_path = Path(credential_setting).expanduser()
     if not credentials_path.exists():
         return {
             "status": "error",
@@ -75,7 +77,10 @@ def upload_to_drive(file_path: str, settings: Settings) -> dict[str, Any]:
     except Exception as exc:
         return {
             "status": "error",
-            "error": f"Google Drive upload failed: {exc}",
+            "error": (
+                f"Google Drive upload failed: {exc}. "
+                "Check service-account file permissions, Drive API enablement, and folder access."
+            ),
         }
 
     link = (

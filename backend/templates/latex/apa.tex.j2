@@ -1,0 +1,74 @@
+\documentclass[man]{apa7}
+
+\usepackage{amsmath}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{hyperref}
+\usepackage{float}
+\usepackage{hanging}
+
+\hypersetup{
+    colorlinks=true,
+    linkcolor=black,
+    citecolor=black,
+    urlcolor=blue,
+    pdfborder={0 0 0}
+}
+
+\title{(((title|latex_escape)))}
+\shorttitle{(((short_title|latex_escape)))}
+
+\authorsnames{(((authors|join(', ')|latex_escape)))}
+\authorsaffiliations{(((affiliation|latex_escape)))}
+
+\abstract{(((abstract|latex_escape)))}
+
+\keywords{(((keywords|join(', ')|latex_escape)))}
+
+\authornote{
+   Correspondence concerning this article should be addressed to (((authors[0]|latex_escape))), (((affiliation|latex_escape))). E-mail: (((contact_email|latex_escape)))
+}
+
+\begin{document}
+
+\maketitle
+
+((*for section in sections*))
+\section{(((section.title|latex_escape)))}
+((*for paragraph in section.content*))
+(((paragraph|latex_escape)))
+
+((*endfor*))
+((*if section.table*))
+\begin{table}[H]
+\centering
+\caption{(((section.table.caption|latex_escape)))}
+\label{tab:(((loop.index)))}
+\begin{tabular}{(((section.table.columns)))}
+\toprule
+(((section.table.header|latex_escape))) \\
+\midrule
+((*for row in section.table.rows*))
+(((row|latex_escape))) \\
+((*endfor*))
+\bottomrule
+\end{tabular}
+\end{table}
+((*endif*))
+((*if section.figure_caption*))
+\begin{figure}[H]
+\centering
+\fbox{\parbox{0.9\columnwidth}{\centering\vspace{1.5cm}\textit{(((section.figure_caption|latex_escape)))}\vspace{1.5cm}}}
+\caption{(((section.figure_caption|latex_escape)))}
+\label{fig:(((loop.index)))}
+\end{figure}
+((*endif*))
+((*endfor*))
+
+\newpage
+\section{References}
+\begin{hangparas}{0.5in}{1}
+(((bibliography_block)))
+\end{hangparas}
+
+\end{document}

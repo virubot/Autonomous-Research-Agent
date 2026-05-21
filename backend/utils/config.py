@@ -20,9 +20,10 @@ def _as_bool(value: str | None, default: bool = False) -> bool:
 
 @dataclass(frozen=True)
 class Settings:
-    gcp_project_id: str | None
-    gcp_location: str
+    google_cloud_project: str | None
+    google_cloud_location: str
     gemini_model: str
+    fallback_model: str
     google_application_credentials: str | None
     memory_db_path: Path
     tool_db_path: Path
@@ -31,10 +32,14 @@ class Settings:
     drive_service_account_json: str | None
     drive_folder_id: str | None
     drive_make_public: bool
+    gemini_timeout_seconds: int
+    gemini_max_retries: int
+    strict_startup_validation: bool
+    mcp_enabled: bool
 
     @property
     def vertex_ready(self) -> bool:
-        return bool(self.gcp_project_id and self.gcp_location)
+        return bool(self.google_cloud_project and self.google_cloud_location)
 
     @property
     def google_application_credentials_path(self) -> Path | None:
@@ -50,10 +55,10 @@ class Settings:
 
     def validate_vertex_settings(self) -> list[str]:
         errors: list[str] = []
-        if not self.gcp_project_id:
-            errors.append("GCP_PROJECT_ID (or GOOGLE_CLOUD_PROJECT) is not configured.")
-        if not self.gcp_location:
-            errors.append("GCP_LOCATION is not configured.")
+        if not self.google_cloud_project:
+            errors.append("GOOGLE_CLOUD_PROJECT is not configured.")
+        if not self.google_cloud_location:
+            errors.append("GOOGLE_CLOUD_LOCATION is not configured.")
 
         credentials_path = self.google_application_credentials_path
         if self.google_application_credentials and credentials_path and not credentials_path.exists():
@@ -82,9 +87,10 @@ def get_settings() -> Settings:
     generated_dir.mkdir(parents=True, exist_ok=True)
 
     return Settings(
-        gcp_project_id=os.getenv("GCP_PROJECT_ID") or os.getenv("GOOGLE_CLOUD_PROJECT"),
-        gcp_location=os.getenv("GCP_LOCATION", "us-central1"),
-        gemini_model=os.getenv("GEMINI_MODEL", "gemini-2.5-pro"),
+        google_cloud_project=os.getenv("GOOGLE_CLOUD_PROJECT") or os.getenv("GCP_PROJECT_ID"),
+        google_cloud_location=os.getenv("GOOGLE_CLOUD_LOCATION") or os.getenv("GCP_LOCATION", "us-central1"),
+        gemini_model=os.getenv("GEMINI_MODEL", "gemini-2.5-flash"),
+        fallback_model=os.getenv("FALLBACK_MODEL", "gemini-2.5-flash-lite"),
         google_application_credentials=os.getenv("GOOGLE_APPLICATION_CREDENTIALS"),
         memory_db_path=PROJECT_ROOT / "agent_memory.db",
         tool_db_path=PROJECT_ROOT / "agent_events.db",
@@ -93,4 +99,10 @@ def get_settings() -> Settings:
         drive_service_account_json=os.getenv("GOOGLE_DRIVE_SERVICE_ACCOUNT_JSON"),
         drive_folder_id=os.getenv("GOOGLE_DRIVE_FOLDER_ID"),
         drive_make_public=_as_bool(os.getenv("GOOGLE_DRIVE_PUBLIC"), default=True),
+        gemini_timeout_seconds=max(15, int(os.getenv("GEMINI_TIMEOUT_SECONDS", "120"))),
+        gemini_max_retries=max(1, int(os.getenv("GEMINI_MAX_RETRIES", "3"))),
+        strict_startup_validation=_as_bool(
+            os.getenv("STRICT_STARTUP_VALIDATION"), default=True
+        ),
+        mcp_enabled=_as_bool(os.getenv("MCP_ENABLED"), default=True),
     )

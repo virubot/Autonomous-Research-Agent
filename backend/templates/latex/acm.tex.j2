@@ -1,0 +1,91 @@
+\documentclass[sigconf,nonacm]{acmart}
+
+\usepackage{amsmath}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{url}
+\usepackage{float}
+\usepackage{tabularx}
+\usepackage{array}
+
+\AtBeginDocument{%
+  \providecommand\BibTeX{{Bib\TeX}}}
+
+\setcopyright{none}
+\copyrightyear{2026}
+\acmYear{2026}
+\acmConference[CONF '26]{Proceedings of the International Conference on Computing and Artificial Intelligence}{May 2026}{Virtual Event}
+\acmBooktitle{Proceedings of the International Conference on Computing and Artificial Intelligence (CONF '26)}
+
+\begin{document}
+
+\title{(((title|latex_escape)))}
+
+((*for author in authors*))
+\author{(((author|latex_escape)))}
+\affiliation{%
+  \institution{(((affiliation|latex_escape)))}
+  \city{Virtual}
+  \country{World}
+}
+\email{(((contact_email|latex_escape)))}
+((*endfor*))
+
+\begin{abstract}
+(((abstract|latex_escape)))
+\end{abstract}
+
+\begin{CCSXML}
+<ccs2012>
+   <concept>
+       <concept_id>10010147.10010178</concept_id>
+       <concept_desc>Computing methodologies~Artificial intelligence</concept_desc>
+       <concept_significance>500</concept_significance>
+       </concept>
+ </ccs2012>
+\end{CCSXML}
+
+\ccsdesc[500]{Computing methodologies~Artificial intelligence}
+
+\keywords{(((keywords|join(', ')|latex_escape)))}
+
+\maketitle
+
+((*for section in sections*))
+\section{(((section.title|latex_escape)))}
+((*for paragraph in section.content*))
+(((paragraph|latex_escape)))
+
+((*endfor*))
+((*if section.table*))
+\begin{table}[H]
+\centering
+\caption{(((section.table.caption|latex_escape)))}
+\label{tab:(((loop.index)))}
+\begin{tabular}{(((section.table.columns)))}
+\toprule
+(((section.table.header|latex_escape))) \\
+\midrule
+((*for row in section.table.rows*))
+(((row|latex_escape))) \\
+((*endfor*))
+\bottomrule
+\end{tabular}
+\end{table}
+((*endif*))
+((*if section.figure_caption*))
+\begin{figure}[H]
+\centering
+\fbox{\parbox{0.9\columnwidth}{\centering\vspace{1.5cm}\textit{(((section.figure_caption|latex_escape)))}\vspace{1.5cm}}}
+\caption{(((section.figure_caption|latex_escape)))}
+\label{fig:(((loop.index)))}
+\end{figure}
+((*endif*))
+((*endfor*))
+
+\section*{Acknowledgments}
+The authors thank the anonymous reviewers for their constructive comments and suggestions which helped improve this manuscript. This research was partially supported by the contributing institutions.
+
+(((bibliography_block)))
+
+\end{document}

@@ -4,6 +4,9 @@ import re
 from datetime import datetime, timezone
 from pathlib import Path
 
+import asyncio
+from typing import Literal
+
 from fastapi import APIRouter, Depends, File, Form, HTTPException, UploadFile
 
 from backend.agent.executor import AgentExecutor, ToolExecutionError
@@ -25,6 +28,7 @@ async def upload(
     prompt: str | None = Form(default=None),
     output_type: str | None = Form(default=None),
     upload_to_drive: bool = Form(default=False),
+    tool_mode: Literal["direct", "mcp"] = Form(default="direct"),
     executor: AgentExecutor = Depends(get_executor),
 ) -> dict:
     if not file.filename:
@@ -45,7 +49,13 @@ async def upload(
     destination.write_bytes(await file.read())
 
     extraction_tool = "extract_pdf" if is_pdf else "extract_image"
-    extraction_trace = executor.execute_tool(extraction_tool, {"file_path": str(destination)})
+    extraction_trace = await asyncio.to_thread(
+        executor.execute_tool,
+        extraction_tool,
+        {"file_path": str(destination)},
+        tool_mode,
+        None,
+    )
     if extraction_trace.get("status") != "success":
         raise HTTPException(
             status_code=400,
@@ -78,12 +88,15 @@ async def upload(
     ]
 
     try:
-        response = executor.run(
-            user_input=user_prompt,
-            preferred_output=output_type,
-            file_context=file_context,
-            upload_results_to_drive=upload_to_drive,
-            initial_tool_calls=[extraction_trace],
+        response = await asyncio.to_thread(
+            executor.run,
+            user_prompt,
+            output_type,
+            file_context,
+            upload_to_drive,
+            [extraction_trace],
+            tool_mode,
+            None,
         )
     except VertexConfigurationError as exc:
         raise HTTPException(status_code=503, detail=str(exc)) from exc
