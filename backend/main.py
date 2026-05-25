@@ -161,20 +161,7 @@ def create_app() -> FastAPI:
     app.include_router(generate_router)
     app.include_router(upload_router)
 
-    # ── Serve Frontend Static Files (Production Single Container Layout) ──
-    # Check if frontend/dist exists, and mount it at the root (/) as fallback.
-    frontend_dist_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)), "frontend", "dist")
-    if os.path.exists(frontend_dist_dir):
-        app.mount("/", StaticFiles(directory=frontend_dist_dir, html=True), name="frontend")
-    else:
-        # Fallback in case of local development or unbuilt frontend
-        @app.get("/")
-        def root_fallback():
-            return {
-                "message": "FastAPI Autonomous Research Assistant backend running.",
-                "health_check": "/health",
-                "note": "frontend/dist not found. Did you build the React frontend?"
-            }
+    app.mount("/", StaticFiles(directory="frontend/dist", html=True), name="frontend")
 
     return app
 
