@@ -3,12 +3,15 @@ FROM node:20-bookworm AS frontend-builder
 
 WORKDIR /app/frontend
 
+# Install frontend dependencies
 COPY frontend/package*.json ./
 
 RUN npm ci
 
+# Copy frontend source
 COPY frontend/ ./
 
+# Build production frontend
 RUN npm run build
 
 
@@ -17,7 +20,7 @@ FROM python:3.11-slim-bookworm AS runner
 
 WORKDIR /app
 
-# Install system dependencies
+# Install Linux system dependencies
 RUN apt-get update && apt-get install -y --no-install-recommends \
     build-essential \
     gcc \
@@ -37,7 +40,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     texlive-fonts-recommended \
     && rm -rf /var/lib/apt/lists/*
 
-# Copy requirements first for caching
+# Copy Python requirements
 COPY requirements.txt .
 
 # Upgrade pip
@@ -46,14 +49,15 @@ RUN pip install --upgrade pip
 # Install Python dependencies
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy backend + app files
+# Copy backend and startup files
 COPY backend/ ./backend/
 COPY start.sh .
 COPY .env.example .
-COPY uploads/ ./uploads/
-COPY outputs/ ./outputs/
 
-# Copy frontend build from stage 1
+# Create runtime folders
+RUN mkdir -p uploads outputs generated_outputs
+
+# Copy built frontend from stage 1
 COPY --from=frontend-builder /app/frontend/dist ./frontend/dist
 
 # Make startup script executable
