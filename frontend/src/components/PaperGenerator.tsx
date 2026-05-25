@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { ChevronDown, FileText, Loader2, CheckCircle2, ExternalLink, Download, Database, Network, Sigma, Sparkles } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { generate, AgentResponse } from "@/lib/api";
+import { generate, AgentResponse, API_BASE_URL } from "@/lib/api";
 
 export const PaperGenerator = () => {
   const [open, setOpen] = useState(true);
@@ -150,7 +150,7 @@ export const PaperGenerator = () => {
                   )}
                   {pdfPath ? (
                     <a
-                      href={`http://localhost:8000/outputs/${pdfPath.split('/').pop()}`}
+                      href={`${API_BASE_URL}/outputs/${pdfPath.split('/').pop()}`}
                       target="_blank"
                       rel="noreferrer"
                       className="flex flex-1 items-center justify-center gap-2 rounded-xl bg-primary/10 border border-primary/20 px-3 py-2.5 text-[12px] font-bold text-primary transition-colors hover:bg-primary/20 hover:text-primary-foreground"

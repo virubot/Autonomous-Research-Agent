@@ -256,9 +256,11 @@ cd ..
 
 | Endpoint | Method | Description |
 |----------|--------|-------------|
-| `/` | `GET` | System health check and diagnostic info |
-| `/api/generate` | `POST` | Core execution endpoint for paper generation |
-| `/api/upload` | `POST` | Ingestion pipeline for PDFs and images |
+| `/` | `GET` | Serves the cinematic React/Vite dashboard application |
+| `/health` | `GET` | System health check and Vertex AI / Drive diagnostic info |
+| `/generate` | `POST` | Core execution endpoint for paper generation |
+| `/upload` | `POST` | Ingestion pipeline for PDF and image OCR intelligence |
+| `/history` | `GET` | Retrieves the history of generated papers |
 | `/mcp/health` | `GET` | Diagnostic status of the MCP server |
 
 ---
@@ -310,12 +312,12 @@ The Vite frontend compiles smoothly into static assets for Vercel. Set your upst
 <summary><b>API POST Example</b></summary>
 
 ```bash
-curl -X POST http://localhost:8000/api/generate \
+curl -X POST http://localhost:8000/generate \
 -H "Content-Type: application/json" \
 -d '{
-  "topic": "The integration of multi-agent architectures in academic writing",
-  "template": "ieee",
-  "depth": "comprehensive"
+  "prompt": "The integration of multi-agent architectures in academic writing",
+  "format_type": "ieee",
+  "page_length": "4-5"
 }'
 ```
 </details>
