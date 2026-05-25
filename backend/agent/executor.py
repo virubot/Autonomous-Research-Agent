@@ -16,7 +16,7 @@ from backend.tools.search import web_search
 from backend.utils.config import Settings
 from backend.utils.gemini import VertexGeminiClient
 import json
-from backend.pdf_generator import generate_pdf
+#from backend.pdf_generator import generate_pdf
 
 
 logger = logging.getLogger(__name__)
