@@ -3,7 +3,7 @@ uvicorn[standard]
 pydantic
 python-multipart
 requests
-duckduckgo-search
+ddgs
 pypdf
 pillow
 pytesseract
@@ -13,3 +13,5 @@ google-auth
 google-auth-httplib2
 google-auth-oauthlib
 python-dotenv
+google-generativeai
+jinja2

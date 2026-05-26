@@ -25,6 +25,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     build-essential \
     gcc \
     g++ \
+    curl \
     libcairo2 \
     libcairo2-dev \
     libpango-1.0-0 \
@@ -33,11 +34,25 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libffi-dev \
     shared-mime-info \
     fonts-dejavu-core \
+    fonts-lmodern \
     tesseract-ocr \
+    ghostscript \
+    pandoc \
+    graphviz \
+    imagemagick \
+    poppler-utils \
+    texlive-base \
     texlive-latex-base \
     texlive-latex-recommended \
     texlive-latex-extra \
     texlive-fonts-recommended \
+    texlive-font-utils \
+    texlive-pictures \
+    texlive-publishers \
+    texlive-science \
+    texlive-bibtex-extra \
+    texlive-extra-utils \
+    lmodern \
     && rm -rf /var/lib/apt/lists/*
 
 # Copy Python requirements
@@ -52,7 +67,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copy backend and startup files
 COPY backend/ ./backend/
 COPY start.sh .
-COPY .env.example .
+COPY .env .
 
 # Create runtime folders
 RUN mkdir -p uploads outputs generated_outputs

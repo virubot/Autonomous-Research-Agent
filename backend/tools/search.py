@@ -80,9 +80,9 @@ def web_search(query: str, max_results: int = 5) -> dict[str, Any]:
         from ddgs import DDGS
     except ImportError:
         try:
-            from duckduckgo_search import DDGS
+            from ddgs import DDGS
         except ImportError as exc:
-            logger.warning("duckduckgo-search and ddgs are both unavailable: %s", exc)
+            logger.warning("ddgs and ddgs are both unavailable: %s", exc)
             errors.append(f"Web search unavailable: {exc}")
 
     if DDGS is not None:
