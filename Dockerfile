@@ -67,7 +67,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copy backend and startup files
 COPY backend/ ./backend/
 COPY start.sh .
-COPY .env .
+COPY .env.example .
 
 # Create runtime folders
 RUN mkdir -p uploads outputs generated_outputs
